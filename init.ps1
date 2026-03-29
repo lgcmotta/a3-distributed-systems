@@ -13,7 +13,7 @@ function New-HexValue {
 
     $value = ''
     while ($value.Length -lt $HexLength) {
-        $value += [Guid]::NewGuid().ToString('N')
+        $value += (New-Guid).ToString('N')
     }
 
     return $value.Substring(0, $HexLength)
