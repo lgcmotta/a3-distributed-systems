@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddPermissiveCors();
 builder.Services.AddApiVersioning(v1);
 builder.Services.AddKeycloak(builder.Configuration);
+builder.Services.AddCaching(builder.Configuration);
 
 if (builder.Environment.IsDevelopment())
 {

@@ -77,5 +77,18 @@ internal static class ServiceCollectionExtensions
 
             return services;
         }
+
+        internal IServiceCollection AddCaching(IConfiguration configuration)
+        {
+            var connectionString = configuration.GetConnectionString("Redis");
+
+            ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
+
+            services.AddStackExchangeRedisCache(options => options.Configuration = connectionString);
+
+            services.AddHybridCache();
+
+            return services;
+        }
     }
 }
