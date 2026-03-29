@@ -24,12 +24,12 @@ Right at the top of the page, you will see a form where you can enter the requir
 
   <img width="1795" height="718" alt="image" src="https://github.com/user-attachments/assets/576f425e-de46-4456-a114-14a217832772" />
 
-5. Click on the `Authorize` button.
-6. You should see that the **Authentication** form has changed, and it only has a single field with the **Access Token**.
+4. Click on the `Authorize` button.
+5. You should see that the **Authentication** form has changed, and it only has a single field with the **Access Token**.
 
   <img width="1795" height="588" alt="image" src="https://github.com/user-attachments/assets/d3808d40-0fa0-4bac-bd06-ed06d65722bf" />
 
-7. After following those steps, Scalar will automatically add the `Authorization` header to all requests.
+6. After following those steps, Scalar will automatically add the `Authorization` header to all requests.
 
 ## Authorization Code
 
