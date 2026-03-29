@@ -38,7 +38,7 @@ if (-not (Test-Path -LiteralPath $ScriptRoot -PathType Container)) {
     throw "Repository root does not exist: $ScriptRoot"
 }
 
-$TemplatePath = Join-Path $ScriptRoot 'src/AppHost/Realms/realm.example.json'
+$TemplatePath = Join-Path $ScriptRoot 'src/AppHost/Realms/realm.template.json'
 $OutputPath = Join-Path $ScriptRoot 'src/AppHost/Realms/realm.json'
 
 if (-not (Test-Path -LiteralPath $TemplatePath -PathType Leaf)) {

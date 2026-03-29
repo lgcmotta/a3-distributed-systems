@@ -1,0 +1,433 @@
+{
+  "realm": "weather-monitor",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "roles": {
+    "realm": [
+      {
+        "name": "uma_authorization"
+      },
+      {
+        "name": "default-roles-weather-monitor",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "uma_authorization"
+          ]
+        }
+      }
+    ],
+    "client": {
+      "weather_api": [
+        {
+          "name": "read"
+        },
+        {
+          "name": "write"
+        }
+      ]
+    }
+  },
+  "defaultRole": {
+    "name": "default-roles-weather-monitor",
+    "composite": true,
+    "clientRole": false
+  },
+  "clientScopes": [
+    {
+      "name": "roles",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "realm roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "realm_access.roles",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "weather_api client roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "config": {
+            "clientId": "weather_api",
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "resource_access.weather_api.roles",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud:weather-api",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "weather_api audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "weather_api",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "userinfo.token.claim": "false"
+          }
+        }
+      ]
+    },
+    {
+      "name": "profile",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "given name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "config": {
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "given_name",
+            "jsonType.label": "String",
+            "user.attribute": "firstName"
+          }
+        },
+        {
+          "name": "family name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "config": {
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "family_name",
+            "jsonType.label": "String",
+            "user.attribute": "lastName"
+          }
+        },
+        {
+          "name": "preferred username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "config": {
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "preferred_username",
+            "jsonType.label": "String",
+            "user.attribute": "username"
+          }
+        }
+      ]
+    },
+    {
+      "name": "email",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "email",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "config": {
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "email",
+            "jsonType.label": "String",
+            "user.attribute": "email"
+          }
+        },
+        {
+          "name": "email verified",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "config": {
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "email_verified",
+            "jsonType.label": "boolean",
+            "user.attribute": "emailVerified"
+          }
+        }
+      ]
+    },
+    {
+      "name": "web-origins",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "allowed web origins",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-allowed-origins-mapper",
+          "config": {
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "acr",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      }
+    }
+  ],
+  "defaultDefaultClientScopes": [
+    "roles",
+    "profile",
+    "email",
+    "web-origins",
+    "acr"
+  ],
+  "clients": [
+    {
+      "clientId": "weather_api",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "bearerOnly": false,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "__WEATHER_API_CLIENT_SECRET__",
+      "redirectUris": [
+        "http://localhost:5250/*",
+        "https://localhost:7155/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5250",
+        "https://localhost:7155"
+      ],
+      "defaultClientScopes": [
+        "roles",
+        "profile",
+        "email",
+        "web-origins",
+        "acr",
+        "aud:weather-api"
+      ]
+    },
+    {
+      "clientId": "postman",
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "bearerOnly": false,
+      "serviceAccountsEnabled": false,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "backchannel.logout.session.required": "true",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "post.logout.redirect.uris": "+"
+      },
+      "redirectUris": [
+        "https://oauth.pstmn.io/v1/callback"
+      ],
+      "webOrigins": [
+        "https://oauth.pstmn.io"
+      ],
+      "defaultClientScopes": [
+        "roles",
+        "profile",
+        "email",
+        "web-origins",
+        "acr",
+        "aud:weather-api"
+      ]
+    },
+    {
+      "clientId": "weather_consumer_a",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "bearerOnly": false,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "__WEATHER_CONSUMER_A_CLIENT_SECRET__",
+      "webOrigins": [
+        "*"
+      ],
+      "defaultClientScopes": [
+        "roles",
+        "profile",
+        "email",
+        "web-origins",
+        "acr",
+        "aud:weather-api"
+      ]
+    },
+    {
+      "clientId": "weather_consumer_b",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "bearerOnly": false,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "__WEATHER_CONSUMER_B_CLIENT_SECRET__",
+      "webOrigins": [
+        "*"
+      ],
+      "defaultClientScopes": [
+        "roles",
+        "profile",
+        "email",
+        "web-origins",
+        "acr",
+        "aud:weather-api"
+      ]
+    },
+    {
+      "clientId": "account",
+      "name": "${client_account}",
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "rootUrl": "${authBaseUrl}",
+      "baseUrl": "/realms/weather-monitor/account/",
+      "redirectUris": [
+        "/realms/weather-monitor/account/*"
+      ],
+      "attributes": {
+        "post.logout.redirect.uris": "+"
+      },
+      "defaultClientScopes": [
+        "roles",
+        "profile",
+        "email",
+        "web-origins",
+        "acr"
+      ]
+    },
+    {
+      "clientId": "account-console",
+      "name": "${client_account-console}",
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "rootUrl": "${authBaseUrl}",
+      "baseUrl": "/realms/weather-monitor/account/",
+      "redirectUris": [
+        "/realms/weather-monitor/account/*"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "+"
+      },
+      "defaultClientScopes": [
+        "roles",
+        "profile",
+        "email",
+        "web-origins",
+        "acr"
+      ]
+    },
+    {
+      "clientId": "admin-cli",
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": true
+    },
+    {
+      "clientId": "realm-management",
+      "protocol": "openid-connect",
+      "bearerOnly": true
+    },
+    {
+      "clientId": "broker",
+      "protocol": "openid-connect",
+      "bearerOnly": true
+    }
+  ],
+  "users": [
+    {
+      "username": "dev-admin",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "dev-admin@weathermonitor.com",
+      "realmRoles": [
+        "uma_authorization"
+      ],
+      "clientRoles": {
+        "weather_api": [
+          "read",
+          "write"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "__DEV_ADMIN_PASSWORD__",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "service-account-weather_consumer_a",
+      "enabled": true,
+      "serviceAccountClientId": "weather_consumer_a",
+      "clientRoles": {
+        "weather_api": [
+          "read",
+          "write"
+        ]
+      }
+    },
+    {
+      "username": "service-account-weather_consumer_b",
+      "enabled": true,
+      "serviceAccountClientId": "weather_consumer_b",
+      "clientRoles": {
+        "weather_api": [
+          "read",
+          "write"
+        ]
+      }
+    }
+  ]
+}

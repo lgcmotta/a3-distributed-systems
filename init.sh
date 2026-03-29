@@ -22,7 +22,7 @@ SCRIPT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || fail "Unable to de
 [[ -n "$SCRIPT_ROOT" ]] || fail "git rev-parse --show-toplevel returned an empty repository root"
 [[ -d "$SCRIPT_ROOT" ]] || fail "Repository root does not exist: $SCRIPT_ROOT"
 
-TEMPLATE_PATH="$SCRIPT_ROOT/src/AppHost/Realms/realm.example.json"
+TEMPLATE_PATH="$SCRIPT_ROOT/src/AppHost/Realms/realm.template.json"
 OUTPUT_PATH="$SCRIPT_ROOT/src/AppHost/Realms/realm.json"
 
 [[ -f "$TEMPLATE_PATH" ]] || fail "Template file not found: $TEMPLATE_PATH"
