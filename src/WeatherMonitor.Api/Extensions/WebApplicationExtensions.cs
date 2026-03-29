@@ -24,7 +24,7 @@ internal static class WebApplicationExtensions
                 options.WithTheme(ScalarTheme.DeepSpace)
                     .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient)
                     .WithOpenApiRoutePattern("/openapi/{documentName}.json")
-                    .WithTitle("Mottaflix Agent API");
+                    .WithTitle("Weather Monitor API");
 
                 if (keycloak is null)
                 {
