@@ -5,11 +5,11 @@ namespace WeatherMonitor.Api.OpenApi.Security;
 
 internal class OpenApiOAuth2SecurityBuilder
 {
-    public const string DefaultOpenApiDescription = "Client Credentials Authentication";
-    public const string DefaultOpenApiReferenceId = "OAuth2";
+    private const string DefaultOpenApiDescription = "OAuth2 Authentication";
+    private const string DefaultOpenApiReferenceId = "OAuth2";
+    private string _schemeId = DefaultOpenApiReferenceId;
 
     private readonly Dictionary<string, string> _scopes = [];
-    private string _schemeId = DefaultOpenApiReferenceId;
     private readonly OpenApiSecurityScheme _scheme = new()
     {
         Type = SecuritySchemeType.OAuth2,
