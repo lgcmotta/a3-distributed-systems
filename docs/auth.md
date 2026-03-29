@@ -36,7 +36,7 @@ Right at the top of the page, you will see a form where you can enter the requir
 1. To use the **Authorization Code** authentication flow, select the `authorizationCode` tab.
 2. Write **postman** into the **Client ID** field.
   
-  > The Authorization Code flow **DOES NOT** require the **Client Secret** field; only the **Client ID**is required.
+  > The Authorization Code flow **DOES NOT** require the **Client Secret** field; only the **Client ID** is required.
 
   <img width="1795" height="780" alt="image" src="https://github.com/user-attachments/assets/1c2d90c6-bf39-42c7-a9d4-afa4d83eb873" />
 
