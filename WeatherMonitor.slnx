@@ -13,7 +13,7 @@
     <File Path="README.md" />
   </Folder>
   <Folder Name="/Solution Items/docs/">
-    <File Path="docs\auth.md" />
+    <File Path="docs/auth.md" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/AppHost/AppHost.csproj" />
