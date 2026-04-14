@@ -15,7 +15,7 @@ public class LivenessHealthCheck : IHealthCheck
         set => _isReady = value;
     }
 
-    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = new CancellationToken())
+    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         var result = StartupCompleted
             ? HealthCheckResult.Healthy("The startup task has completed.")
