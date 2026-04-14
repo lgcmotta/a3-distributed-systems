@@ -1,6 +1,7 @@
 using Keycloak.AuthServices.Common;
 using Scalar.AspNetCore;
 using WeatherMonitor.Api.Infrastructure.Keycloak;
+using WeatherMonitor.Api.Middlewares;
 
 namespace WeatherMonitor.Api.Extensions;
 
@@ -8,6 +9,13 @@ internal static class WebApplicationExtensions
 {
     extension(WebApplication app)
     {
+        internal WebApplication UseGlobalExceptionHandler()
+        {
+            app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+
+            return app;
+        }
+
         internal WebApplication UsePermissiveCors()
         {
             app.UseCors("Permissive");

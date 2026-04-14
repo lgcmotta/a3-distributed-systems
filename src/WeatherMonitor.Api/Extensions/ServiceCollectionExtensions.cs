@@ -1,8 +1,13 @@
 using Asp.Versioning;
+using FluentValidation;
 using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
 using Keycloak.AuthServices.Common;
+using System.Reflection;
+using WeatherMonitor.Api.Behaviors;
+using WeatherMonitor.Api.Diagnostics;
 using WeatherMonitor.Api.Infrastructure.Keycloak;
+using WeatherMonitor.Api.Middlewares;
 using WeatherMonitor.Api.OpenApi;
 
 namespace WeatherMonitor.Api.Extensions;
@@ -11,6 +16,15 @@ internal static class ServiceCollectionExtensions
 {
     extension(IServiceCollection services)
     {
+        internal IServiceCollection AddExceptionHandling()
+        {
+            services.AddTransient<GlobalExceptionHandlerMiddleware>();
+
+            services.AddExceptionHandler<GlobalExceptionHandler>();
+
+            return services;
+        }
+
         internal IServiceCollection AddPermissiveCors()
         {
             return services.AddCors(options => options.AddPolicy(
@@ -74,6 +88,22 @@ internal static class ServiceCollectionExtensions
                 options.GroupNameFormat = "'v'V";
                 options.SubstituteApiVersionInUrl = true;
             });
+
+            return services;
+        }
+
+        internal IServiceCollection AddCQRS()
+        {
+            var assembly = Assembly.GetCallingAssembly();
+
+            services.AddMediatR(options =>
+            {
+                options.AddOpenBehavior(typeof(LoggingBehavior<,>));
+                options.AddOpenBehavior(typeof(ValidationBehavior<,>));
+                options.RegisterServicesFromAssembly(assembly);
+            });
+
+            services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
 
             return services;
         }

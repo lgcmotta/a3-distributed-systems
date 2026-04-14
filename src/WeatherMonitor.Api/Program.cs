@@ -5,9 +5,12 @@ var v1 = new ApiVersion(majorVersion: 1, minorVersion: 0);
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandling();
 builder.Services.AddPermissiveCors();
 builder.Services.AddApiVersioning(v1);
 builder.Services.AddKeycloak(builder.Configuration);
+builder.Services.AddCQRS();
 builder.Services.AddCaching(builder.Configuration);
 
 if (builder.Environment.IsDevelopment())
@@ -18,6 +21,7 @@ if (builder.Environment.IsDevelopment())
 var app = builder.Build();
 
 app.UseRouting();
+app.UseGlobalExceptionHandler();
 app.UsePermissiveCors();
 app.UseAuthentication();
 app.UseAuthorization();
