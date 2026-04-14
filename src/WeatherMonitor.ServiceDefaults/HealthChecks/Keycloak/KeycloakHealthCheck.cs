@@ -5,7 +5,7 @@ namespace WeatherMonitor.ServiceDefaults.HealthChecks.Keycloak;
 
 internal class KeycloakHealthCheck(IKeycloakHealthCheckApi keycloak) : IHealthCheck
 {
-    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = new CancellationToken())
+    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         try
         {
