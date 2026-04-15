@@ -1,9 +1,12 @@
 using Asp.Versioning;
 using WeatherMonitor.Api.Extensions;
+using WeatherMonitor.ServiceDefaults.Extensions;
 
 var v1 = new ApiVersion(majorVersion: 1, minorVersion: 0);
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddServiceDefaults();
 
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandling();
@@ -19,6 +22,8 @@ if (builder.Environment.IsDevelopment())
 }
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 app.UseRouting();
 app.UseGlobalExceptionHandler();

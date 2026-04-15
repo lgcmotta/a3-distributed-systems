@@ -17,6 +17,8 @@ internal static class WeatherMonitorResourceBuilderExtensions
                 .WaitFor(redis)
                 .WaitFor(database)
                 .WithUrl("/scalar", displayText: "Scalar")
+                .WithHttpHealthCheck("/healthz/ready")
+                .WithHttpHealthCheck("/healthz/live")
                 .WithEnvironment(context =>
                 {
                     var baseUrl = keycloak.GetEndpoint("http").Url.TrimEnd('/');

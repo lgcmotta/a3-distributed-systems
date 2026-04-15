@@ -22,4 +22,8 @@
     <PackageReference Include="Scalar.AspNetCore" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\WeatherMonitor.ServiceDefaults\WeatherMonitor.ServiceDefaults.csproj" />
+  </ItemGroup>
+
 </Project>
