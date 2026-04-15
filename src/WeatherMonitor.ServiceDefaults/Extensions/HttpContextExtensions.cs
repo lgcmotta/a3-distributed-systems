@@ -29,7 +29,14 @@ internal static class HttpContextExtensions
             {
                 Status = report.Status.ToString(),
                 TotalDuration = report.TotalDuration.ToString("c"),
-                Entries = report.Entries.ToDictionary(entry => JsonNamingPolicy.SnakeCaseLower.ConvertName(entry.Key))
+                Entries = report.Entries.ToDictionary(
+                    keySelector: pair => JsonNamingPolicy.SnakeCaseLower.ConvertName(pair.Key),
+                    elementSelector: pair => new
+                    {
+                        pair.Value.Status,
+                        pair.Value.Duration,
+                        pair.Value.Description
+                    })
             };
 
             context.Response.StatusCode = statusCode;
