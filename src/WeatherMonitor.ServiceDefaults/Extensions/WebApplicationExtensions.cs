@@ -13,11 +13,6 @@ public static class WebApplicationExtensions
     {
         public WebApplication MapDefaultEndpoints()
         {
-            if (!app.Environment.IsDevelopment())
-            {
-                return app;
-            }
-
             app.MapHealthChecks(ReadinessEndpointPath, WebApplication.CreateHealthCheckOptions(tag: "ready"));
 
             app.MapHealthChecks(LivenessEndpointPath, WebApplication.CreateHealthCheckOptions(tag: "alive"));
