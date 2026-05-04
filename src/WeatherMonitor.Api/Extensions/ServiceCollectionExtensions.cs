@@ -3,9 +3,13 @@ using FluentValidation;
 using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
 using Keycloak.AuthServices.Common;
+using Refit;
 using System.Reflection;
 using WeatherMonitor.Api.Behaviors;
 using WeatherMonitor.Api.Diagnostics;
+using WeatherMonitor.Api.Infrastructure.Clients;
+using WeatherMonitor.Api.Infrastructure.Clients.Handlers;
+using WeatherMonitor.Api.Infrastructure.Clients.Interfaces;
 using WeatherMonitor.Api.Infrastructure.Keycloak;
 using WeatherMonitor.Api.Middlewares;
 using WeatherMonitor.Api.OpenApi;
@@ -118,6 +122,30 @@ internal static class ServiceCollectionExtensions
 
             services.AddHybridCache();
 
+            return services;
+        }
+
+        internal IServiceCollection AddCachingHandler()
+        {
+            services.AddTransient<CachingHandler>();
+            
+            services
+                .AddRefitClient<ICptecRefitApi>()
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://brasilapi.com.br/api"))
+                .AddHttpMessageHandler<CachingHandler>()
+                .AddStandardResilienceHandler(options =>
+                {
+                    options.TotalRequestTimeout.Timeout = TimeSpan.FromMinutes(1);
+                    options.AttemptTimeout.Timeout       = TimeSpan.FromMinutes(1);
+                    options.CircuitBreaker.SamplingDuration = TimeSpan.FromMinutes(2);
+                });
+
+            return services;
+        }
+
+        internal IServiceCollection AddClients()
+        {
+            services.AddScoped<IBrasilApiClient, BrasilApiClient>();
             return services;
         }
     }
