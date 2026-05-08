@@ -19,6 +19,7 @@
   <Folder Name="/src/">
     <Project Path="src/AppHost/AppHost.csproj" />
     <Project Path="src/WeatherMonitor.Api/WeatherMonitor.Api.csproj" />
+    <Project Path="src/WeatherMonitor.Domain/WeatherMonitor.Domain.csproj" />
     <Project Path="src/WeatherMonitor.ServiceDefaults/WeatherMonitor.ServiceDefaults.csproj" />
   </Folder>
 </Solution>
