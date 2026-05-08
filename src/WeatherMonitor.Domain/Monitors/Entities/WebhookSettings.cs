@@ -25,7 +25,7 @@ public sealed class WebhookSettings
 
     public string? AccessToken { get; private set; } = string.Empty;
 
-    public TimeOnly ScheduleFor { get; private set;  }
+    public TimeOnly ScheduleFor { get; private set; }
 
     internal void Reconfigure(string url, string? accessToken = null)
     {
