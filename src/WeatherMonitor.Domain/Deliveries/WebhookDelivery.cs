@@ -51,7 +51,7 @@ public sealed class WebhookDelivery : IAggregateRoot
             MonitorId = monitorId,
             ClientId = clientId.Trim(),
             ForecastDate = forecastDate,
-            Location = new WeatherLocation { Code = cityCode.Trim(), Name = cityName.Trim(), State = state.Trim() },
+            Location = new WeatherLocation { Code = cityCode.Trim(), Name = cityName.Trim(), State = state.Trim().ToUpperInvariant() },
             WeatherCondition = new WeatherCondition { Code = weatherConditionCode.Trim(), Description = weatherConditionDescription.Trim() }
         };
     }
@@ -74,6 +74,11 @@ public sealed class WebhookDelivery : IAggregateRoot
 
     public void AssignJob(string jobId)
     {
+        if (Status.IsDelivered())
+        {
+            return;
+        }
+
         ArgumentException.ThrowIfNullOrWhiteSpace(jobId);
 
         var normalizedJobId = jobId.Trim();
@@ -93,7 +98,7 @@ public sealed class WebhookDelivery : IAggregateRoot
 
     public void RegisterRetry()
     {
-        if (Status != WebhookDeliveryStatus.Pending)
+        if (!Status.IsPending())
         {
             throw new InvalidOperationException("A terminal delivery cannot be changed.");
         }
@@ -108,12 +113,12 @@ public sealed class WebhookDelivery : IAggregateRoot
             throw new ArgumentException("Delivered date should not be a default", nameof(deliveredAt));
         }
 
-        if (Status == WebhookDeliveryStatus.Delivered)
+        if (Status.IsDelivered())
         {
             return;
         }
 
-        if (Status == WebhookDeliveryStatus.Failed)
+        if (Status.IsFailed())
         {
             throw new InvalidOperationException("A failed delivery cannot be marked as delivered.");
         }
@@ -125,12 +130,12 @@ public sealed class WebhookDelivery : IAggregateRoot
 
     public void MarkFailed(string? reason)
     {
-        if (Status == WebhookDeliveryStatus.Failed)
+        if (Status.IsFailed())
         {
             return;
         }
 
-        if (Status == WebhookDeliveryStatus.Delivered)
+        if (Status.IsDelivered())
         {
             throw new InvalidOperationException("A delivered delivery cannot be marked as failed.");
         }

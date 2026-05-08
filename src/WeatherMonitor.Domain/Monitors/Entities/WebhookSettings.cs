@@ -16,14 +16,14 @@ public sealed class WebhookSettings
             throw new ArgumentException("Webhook URL must be an absolute URI.", nameof(url));
         }
 
-        Url = url;
+        Url = url.Trim();
         AccessToken = accessToken;
         ScheduleFor = scheduleFor;
     }
 
     public string Url { get; private set; } = string.Empty;
 
-    public string? AccessToken { get; private set; } = string.Empty;
+    public string? AccessToken { get; private set; }
 
     public TimeOnly ScheduleFor { get; private set; }
 

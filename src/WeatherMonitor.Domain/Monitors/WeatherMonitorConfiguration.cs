@@ -80,6 +80,8 @@ public sealed class WeatherMonitorConfiguration : IAggregateRoot
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(condition);
 
-        return WeatherCondition.Code == condition;
+        return WeatherCondition.TryFromCode(condition, out var weatherCondition)
+               && weatherCondition is not null
+               && WeatherCondition.Code == weatherCondition.Code;
     }
 }
