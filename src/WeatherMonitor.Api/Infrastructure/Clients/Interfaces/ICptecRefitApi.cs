@@ -6,12 +6,12 @@ namespace WeatherMonitor.Api.Infrastructure.Clients.Interfaces;
 public interface ICptecRefitApi
 {
     [Get("/cptec/v1/cidade/{cityName}")]
-    Task<IReadOnlyList<CityResponseModel>> SearchCitiesAsync(
+    Task<BrasilApiCity> SearchCitiesAsync(
         string cityName,
         CancellationToken cancellationToken);
 
     [Get("/cptec/v1/clima/previsao/{cityCode}/{days}")]
-    Task<IReadOnlyList<ForecastResponseModel>> GetForecastAsync(
+    Task<BrasilApiForecast> GetForecastAsync(
         string cityCode,
         int days,
         CancellationToken cancellationToken);

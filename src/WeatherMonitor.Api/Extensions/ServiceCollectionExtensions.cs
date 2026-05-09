@@ -124,28 +124,25 @@ internal static class ServiceCollectionExtensions
 
             return services;
         }
-
-        internal IServiceCollection AddCachingHandler()
+        
+        internal IServiceCollection AddBrasilApiClient(IConfiguration configuration)
         {
+            var brasilApiUrl = configuration.GetValue<string>("BrasilApiUrl");
+            ArgumentException.ThrowIfNullOrEmpty(brasilApiUrl);
+
             services.AddTransient<CachingHandler>();
-            
+
             services
                 .AddRefitClient<ICptecRefitApi>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://brasilapi.com.br/api"))
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(brasilApiUrl))
                 .AddHttpMessageHandler<CachingHandler>()
                 .AddStandardResilienceHandler(options =>
                 {
-                    options.TotalRequestTimeout.Timeout = TimeSpan.FromMinutes(1);
-                    options.AttemptTimeout.Timeout       = TimeSpan.FromMinutes(1);
+                    options.TotalRequestTimeout.Timeout   = TimeSpan.FromMinutes(1);
+                    options.AttemptTimeout.Timeout        = TimeSpan.FromMinutes(1);
                     options.CircuitBreaker.SamplingDuration = TimeSpan.FromMinutes(2);
                 });
 
-            return services;
-        }
-
-        internal IServiceCollection AddClients()
-        {
-            services.AddScoped<IBrasilApiClient, BrasilApiClient>();
             return services;
         }
     }
