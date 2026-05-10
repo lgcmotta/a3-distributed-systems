@@ -9,6 +9,8 @@ internal static class WeatherMonitorResourceBuilderExtensions
             IResourceBuilder<RedisResource> redis,
             IResourceBuilder<PostgresDatabaseResource> database)
         {
+            var brasilApi = builder.AddParameter("brasil-api-url");
+            
             var weather = builder.AddProject<Projects.WeatherMonitor_Api>("WeatherMonitor")
                 .WithReference(keycloak)
                 .WithReference(redis)
@@ -19,6 +21,7 @@ internal static class WeatherMonitorResourceBuilderExtensions
                 .WithUrl("/scalar", displayText: "Scalar")
                 .WithHttpHealthCheck("/healthz/ready")
                 .WithHttpHealthCheck("/healthz/live")
+                .WithEnvironment("BrasilApiUrl", brasilApi)
                 .WithEnvironment(context =>
                 {
                     var baseUrl = keycloak.GetEndpoint("http").Url.TrimEnd('/');

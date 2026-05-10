@@ -15,6 +15,7 @@ builder.Services.AddApiVersioning(v1);
 builder.Services.AddKeycloak(builder.Configuration);
 builder.Services.AddCQRS();
 builder.Services.AddCaching(builder.Configuration);
+builder.Services.AddBrasilApiClient(builder.Configuration);
 
 if (builder.Environment.IsDevelopment())
 {
