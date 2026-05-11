@@ -1,0 +1,39 @@
+name: Lint
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  checks: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  dotnet-format:
+    name: dotnet format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore WeatherMonitor.slnx
+
+      - name: Run dotnet format
+        run: dotnet format WeatherMonitor.slnx --no-restore --verbosity diagnostic --exclude src/WeatherMonitor.Api/Infrastructure/Persistence/Migrations
+
+      - name: Comment formatting suggestions
+        uses: reviewdog/action-suggester@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tool_name: dotnet format
+          level: error
+          filter_mode: diff_context
+          fail_level: any

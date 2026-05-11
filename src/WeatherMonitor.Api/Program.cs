@@ -16,6 +16,8 @@ builder.Services.AddKeycloak(builder.Configuration);
 builder.Services.AddCQRS();
 builder.Services.AddCaching(builder.Configuration);
 builder.Services.AddBrasilApiClient(builder.Configuration);
+builder.Services.AddTimeProvider();
+builder.Services.AddAppDbContext();
 
 if (builder.Environment.IsDevelopment())
 {

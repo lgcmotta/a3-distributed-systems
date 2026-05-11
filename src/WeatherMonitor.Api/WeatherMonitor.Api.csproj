@@ -16,13 +16,20 @@
     <PackageReference Include="Keycloak.AuthServices.Authorization" />
     <PackageReference Include="MediatR" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
     <PackageReference Include="Microsoft.OpenApi" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="Scalar.AspNetCore" />
+    <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WeatherMonitor.Domain\WeatherMonitor.Domain.csproj" />
     <ProjectReference Include="..\WeatherMonitor.ServiceDefaults\WeatherMonitor.ServiceDefaults.csproj" />
   </ItemGroup>
 

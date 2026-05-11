@@ -14,5 +14,5 @@ public sealed record WebhookDeliveryStatus : Enumeration
 
     internal bool IsPending() => this is { Key: 0 };
     internal bool IsDelivered() => this is { Key: 1 };
-    internal bool IsFailed() => this is { Key: 1 };
+    internal bool IsFailed() => this is { Key: 2 };
 }

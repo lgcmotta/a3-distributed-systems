@@ -8,7 +8,11 @@ var keycloak = builder.AddKeycloakContainer(postgres.AddKeycloakDatabase());
 
 var redis = builder.AddRedisContainer();
 
-builder.AddWeatherMonitorProject(keycloak, redis, postgres.AddWeatherMonitorDatabase());
+var database = postgres.AddWeatherMonitorDatabase();
+
+var dotnet = builder.AddDotNetEfDatabaseUpdateCommand(database);
+
+builder.AddWeatherMonitorProject(keycloak, redis, database, dotnet);
 
 var app = builder.Build();
 
