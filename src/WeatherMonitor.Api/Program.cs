@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using WeatherMonitor.Api.Extensions;
+using WeatherMonitor.Api.Features.GetWeatherConditions;
 using WeatherMonitor.ServiceDefaults.Extensions;
 
 var v1 = new ApiVersion(majorVersion: 1, minorVersion: 0);
@@ -41,5 +42,7 @@ if (app.Environment.IsDevelopment())
 }
 
 var api = app.MapApiGroup();
+
+api.MapGetWeatherConditionCodes(v1);
 
 await app.RunAsync();
