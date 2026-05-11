@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using WeatherMonitor.Api.Shared;
 
-namespace WeatherMonitor.Api.Features.GetWeatherConditionCodes;
+namespace WeatherMonitor.Api.Features.GetWeatherConditions;
 
-internal static class GetWeatherConditionCodesEndpoint
+internal static class GetWeatherConditionsEndpoint
 {
     extension(IEndpointRouteBuilder builder)
     {

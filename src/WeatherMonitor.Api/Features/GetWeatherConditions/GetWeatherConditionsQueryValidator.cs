@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace WeatherMonitor.Api.Features.GetWeatherConditionCodes;
+namespace WeatherMonitor.Api.Features.GetWeatherConditions;
 
 internal sealed class GetWeatherConditionsQueryValidator : AbstractValidator<GetWeatherConditionsQuery>
 {

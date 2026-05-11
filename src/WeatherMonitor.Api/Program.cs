@@ -1,6 +1,6 @@
 using Asp.Versioning;
 using WeatherMonitor.Api.Extensions;
-using WeatherMonitor.Api.Features.GetWeatherConditionCodes;
+using WeatherMonitor.Api.Features.GetWeatherConditions;
 using WeatherMonitor.ServiceDefaults.Extensions;
 
 var v1 = new ApiVersion(majorVersion: 1, minorVersion: 0);
