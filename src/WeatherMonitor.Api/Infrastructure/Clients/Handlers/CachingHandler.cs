@@ -32,11 +32,13 @@ internal sealed class CachingHandler(HybridCache cache) : DelegatingHandler
 
                 return await upstreamResponse.Content.ReadAsStringAsync(ct);
             },
-            new HybridCacheEntryOptions() { Expiration = Ttl },
+            new HybridCacheEntryOptions { Expiration = Ttl },
             cancellationToken: cancellationToken);
 
         if (cachedBody is null)
+        {
             return upstreamResponse ?? await base.SendAsync(request, cancellationToken);
+        }
 
         upstreamResponse?.Dispose();
 
