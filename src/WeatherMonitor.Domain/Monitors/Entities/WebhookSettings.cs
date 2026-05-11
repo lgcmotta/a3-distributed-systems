@@ -7,9 +7,15 @@ public sealed class WebhookSettings
     private WebhookSettings()
     { }
 
-    public WebhookSettings([StringSyntax(StringSyntaxAttribute.Uri)] string url, TimeOnly scheduleFor, string? accessToken = null) : this()
+    public WebhookSettings([StringSyntax(StringSyntaxAttribute.Uri)] string url, TimeOnly scheduleFor, string timeZoneId, string? accessToken = null) : this()
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(url);
+        ArgumentException.ThrowIfNullOrWhiteSpace(timeZoneId);
+
+        if (!TimeZoneInfo.TryFindSystemTimeZoneById(timeZoneId, out _))
+        {
+            throw new ArgumentException($"'{timeZoneId}' is not a valid time zone ID. Use an IANA time zone ID.", nameof(timeZoneId));
+        }
 
         if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
         {
@@ -19,6 +25,7 @@ public sealed class WebhookSettings
         Url = url.Trim();
         AccessToken = accessToken;
         ScheduleFor = scheduleFor;
+        TimeZoneId = timeZoneId;
     }
 
     public string Url { get; private set; } = string.Empty;
@@ -26,6 +33,8 @@ public sealed class WebhookSettings
     public string? AccessToken { get; private set; }
 
     public TimeOnly ScheduleFor { get; private set; }
+
+    public string TimeZoneId { get; private set; } = string.Empty;
 
     internal void Reconfigure(string url, string? accessToken = null)
     {
@@ -42,7 +51,7 @@ public sealed class WebhookSettings
         }
     }
 
-    internal void Reschedule(TimeOnly time)
+    internal void Reschedule(TimeOnly time, string? timeZoneId = null)
     {
         if (ScheduleFor == time)
         {
@@ -50,5 +59,12 @@ public sealed class WebhookSettings
         }
 
         ScheduleFor = time;
+
+        if (timeZoneId is not null &&
+            TimeZoneId != timeZoneId &&
+            TimeZoneInfo.TryFindSystemTimeZoneById(timeZoneId, out _))
+        {
+            TimeZoneId = timeZoneId;
+        }
     }
 }

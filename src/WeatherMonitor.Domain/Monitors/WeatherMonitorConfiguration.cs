@@ -18,6 +18,7 @@ public sealed class WeatherMonitorConfiguration : IAggregateRoot
         string weatherConditionCode,
         string webhookUrl,
         TimeOnly time,
+        string timeZoneId,
         string? accessToken = null) : this()
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(clientId);
@@ -30,7 +31,7 @@ public sealed class WeatherMonitorConfiguration : IAggregateRoot
         ClientId = clientId.Trim();
         Location = MonitorLocation.Create(cityCode, cityName, state);
         WeatherCondition = weatherCondition;
-        Webhook = new WebhookSettings(webhookUrl, time, accessToken);
+        Webhook = new WebhookSettings(webhookUrl, time, timeZoneId, accessToken);
         Enabled = true;
     }
 
