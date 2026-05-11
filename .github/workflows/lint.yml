@@ -27,7 +27,7 @@ jobs:
         run: dotnet restore WeatherMonitor.slnx
 
       - name: Run dotnet format
-        run: dotnet format WeatherMonitor.slnx --no-restore --verbosity diagnostic
+        run: dotnet format WeatherMonitor.slnx --no-restore --verbosity diagnostic --exclude src/WeatherMonitor.Api/Infrastructure/Persistence/Migrations
 
       - name: Comment formatting suggestions
         uses: reviewdog/action-suggester@v1
