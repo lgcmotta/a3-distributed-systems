@@ -70,11 +70,7 @@ public class WebhookDeliveryEntityTypeConfiguration : IEntityTypeConfiguration<W
         builder.Property<DateTimeOffset?>("updated_at")
             .IsRequired(false);
 
-        builder.HasIndex(delivery => new
-            {
-                delivery.Status,
-                delivery.ScheduledFor
-            })
+        builder.HasIndex(delivery => new { delivery.Status, delivery.ScheduledFor })
             .HasDatabaseName("ix_webhook_delivery_status_scheduled_for");
     }
 }
