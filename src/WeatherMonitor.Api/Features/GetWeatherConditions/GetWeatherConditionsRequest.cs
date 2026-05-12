@@ -6,7 +6,7 @@ using WeatherMonitor.Api.Shared;
 namespace WeatherMonitor.Api.Features.GetWeatherConditions;
 
 [UsedImplicitly]
-internal record GetWeatherConditionsQuery(
+internal record GetWeatherConditionsRequest(
     [property: FromQuery(Name = "page")] int Page = 1,
     [property: FromQuery(Name = "size")] int Size = 10
-) : IRequest<(IEnumerable<WeatherConditionResponse>, PagedResponseModel)>;
+) : IRequest<(IEnumerable<WeatherConditionResponse>, PagedResponse)>;
