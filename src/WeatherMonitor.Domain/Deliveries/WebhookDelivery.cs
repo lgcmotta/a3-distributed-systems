@@ -16,7 +16,7 @@ public sealed class WebhookDelivery : IAggregateRoot
         string clientId,
         DateOnly forecastDate,
         DateTimeOffset scheduledFor,
-        string cityCode,
+        int cityCode,
         string cityName,
         string state,
         string weatherConditionCode,
@@ -38,7 +38,7 @@ public sealed class WebhookDelivery : IAggregateRoot
         }
 
         ArgumentException.ThrowIfNullOrWhiteSpace(clientId);
-        ArgumentException.ThrowIfNullOrWhiteSpace(cityCode);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(cityCode);
         ArgumentException.ThrowIfNullOrWhiteSpace(cityName);
         ArgumentException.ThrowIfNullOrWhiteSpace(state);
         ArgumentException.ThrowIfNullOrWhiteSpace(weatherConditionCode);
@@ -51,7 +51,7 @@ public sealed class WebhookDelivery : IAggregateRoot
             MonitorId = monitorId,
             ClientId = clientId.Trim(),
             ForecastDate = forecastDate,
-            Location = new WeatherLocation { Code = cityCode.Trim(), Name = cityName.Trim(), State = state.Trim().ToUpperInvariant() },
+            Location = new WeatherLocation { Code = cityCode, Name = cityName.Trim(), State = state.Trim().ToUpperInvariant() },
             WeatherCondition = new WeatherCondition { Code = weatherConditionCode.Trim(), Description = weatherConditionDescription.Trim() }
         };
     }

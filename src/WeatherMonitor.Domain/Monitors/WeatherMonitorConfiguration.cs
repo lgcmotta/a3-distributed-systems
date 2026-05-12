@@ -12,7 +12,7 @@ public sealed class WeatherMonitorConfiguration : IAggregateRoot
 
     public WeatherMonitorConfiguration(
         string clientId,
-        string cityCode,
+        int cityCode,
         string cityName,
         string state,
         string weatherConditionCode,

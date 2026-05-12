@@ -21,7 +21,7 @@ namespace WeatherMonitor.Api.Infrastructure.Persistence.Migrations
                     enabled = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    monitor_location_city_code = table.Column<string>(type: "character varying(12)", maxLength: 12, nullable: false),
+                    monitor_location_city_code = table.Column<int>(type: "integer", nullable: false),
                     monitor_location_city_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     monitor_location_state = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
                     webhook_settings_access_token = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
@@ -84,8 +84,8 @@ namespace WeatherMonitor.Api.Infrastructure.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql("""
-                              DROP INDEX IF EXISTS ux_webhook_delivery_monitor_forecast_date;
-                              """);
+                                 DROP INDEX IF EXISTS ux_webhook_delivery_monitor_forecast_date;
+                                 """);
 
             migrationBuilder.DropTable(
                 name: "weather_monitor_configuration");

@@ -13,7 +13,7 @@ using WeatherMonitor.Api.Infrastructure.Persistence;
 namespace WeatherMonitor.Api.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260511043244_InitialModel")]
+    [Migration("20260512011703_InitialModel")]
     partial class InitialModel
     {
         /// <inheritdoc />
@@ -87,8 +87,7 @@ namespace WeatherMonitor.Api.Infrastructure.Persistence.Migrations
                                 {
                                     b2.IsRequired();
 
-                                    b2.Property<string>("Code")
-                                        .IsRequired()
+                                    b2.Property<int>("Code")
                                         .HasJsonPropertyName("code");
 
                                     b2.Property<string>("Name")
@@ -162,10 +161,8 @@ namespace WeatherMonitor.Api.Infrastructure.Persistence.Migrations
                         {
                             b1.IsRequired();
 
-                            b1.Property<string>("CityCode")
-                                .IsRequired()
-                                .HasMaxLength(12)
-                                .HasColumnType("character varying(12)")
+                            b1.Property<int>("CityCode")
+                                .HasColumnType("integer")
                                 .HasColumnName("monitor_location_city_code");
 
                             b1.Property<string>("CityName")

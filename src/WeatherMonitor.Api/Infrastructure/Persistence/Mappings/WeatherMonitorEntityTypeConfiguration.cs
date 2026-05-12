@@ -2,7 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 using WeatherMonitor.Api.Infrastructure.Persistence.Extensions;
+using WeatherMonitor.Domain.Core;
 using WeatherMonitor.Domain.Monitors;
+using WeatherMonitor.Domain.Monitors.ValueObjects;
 using WeatherCondition = WeatherMonitor.Domain.Monitors.ValueObjects.WeatherCondition;
 
 namespace WeatherMonitor.Api.Infrastructure.Persistence.Mappings;
@@ -27,7 +29,6 @@ internal sealed class WeatherMonitorEntityTypeConfiguration : IEntityTypeConfigu
         builder.ComplexProperty(monitor => monitor.Location, complex =>
         {
             complex.SnakeCaseLowerProperty(location => location.CityCode)
-                .HasMaxLength(12)
                 .IsRequired();
 
             complex.SnakeCaseLowerProperty(location => location.CityName)
@@ -36,6 +37,7 @@ internal sealed class WeatherMonitorEntityTypeConfiguration : IEntityTypeConfigu
 
             complex.SnakeCaseLowerProperty(location => location.State)
                 .HasMaxLength(2)
+                .HasConversion(state => state.Value, value => Enumeration.ParseByValue<BrazilianState>(value))
                 .IsRequired();
         });
 
