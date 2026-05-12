@@ -2,6 +2,8 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Text.Json;
+using WeatherMonitor.Api.Infrastructure.Clients.Exceptions;
+using WeatherMonitor.Domain.Monitors.Exceptions;
 
 namespace WeatherMonitor.Api.Extensions;
 
@@ -46,6 +48,82 @@ internal static class ProblemDetailsExtensions
                             grouping => grouping.Key,
                             grouping => grouping.Select(failure => failure.ErrorMessage).ToArray()
                         )
+                }
+            };
+        }
+    }
+
+    extension(MonitorCityNotFoundException exception)
+    {
+        internal ProblemDetails ToProblemDetails(string path)
+        {
+            return new ProblemDetails
+            {
+                Title = "Monitor City Not Found",
+                Detail = exception.Message,
+                Status = StatusCodes.Status400BadRequest,
+                Instance = path,
+                Extensions = new Dictionary<string, object?>
+                {
+                    ["trace_id"] = Activity.Current?.TraceId.ToString(),
+                    ["exception_type"] = exception.GetType().FullName
+                }
+            };
+        }
+    }
+
+    extension(DuplicateWeatherMonitorException exception)
+    {
+        internal ProblemDetails ToProblemDetails(string path)
+        {
+            return new ProblemDetails
+            {
+                Title = "Duplicate Weather Monitor",
+                Detail = exception.Message,
+                Status = StatusCodes.Status409Conflict,
+                Instance = path,
+                Extensions = new Dictionary<string, object?>
+                {
+                    ["trace_id"] = Activity.Current?.TraceId.ToString(),
+                    ["exception_type"] = exception.GetType().FullName
+                }
+            };
+        }
+    }
+
+    extension(CityLookupFailedException exception)
+    {
+        internal ProblemDetails ToProblemDetails(string path)
+        {
+            return new ProblemDetails
+            {
+                Title = "City Lookup Failed",
+                Detail = exception.Message,
+                Status = StatusCodes.Status404NotFound,
+                Instance = path,
+                Extensions = new Dictionary<string, object?>
+                {
+                    ["trace_id"] = Activity.Current?.TraceId.ToString(),
+                    ["exception_type"] = exception.GetType().FullName
+                }
+            };
+        }
+    }
+
+    extension(CityLookupUnavailableException exception)
+    {
+        internal ProblemDetails ToProblemDetails(string path)
+        {
+            return new ProblemDetails
+            {
+                Title = "City Lookup Unavailable",
+                Detail = exception.Message,
+                Status = StatusCodes.Status503ServiceUnavailable,
+                Instance = path,
+                Extensions = new Dictionary<string, object?>
+                {
+                    ["trace_id"] = Activity.Current?.TraceId.ToString(),
+                    ["exception_type"] = exception.GetType().FullName
                 }
             };
         }
