@@ -21,8 +21,7 @@ internal static class ProblemDetailsExtensions
                 Instance = path,
                 Extensions = new Dictionary<string, object?>
                 {
-                    ["trace_id"] = Activity.Current?.TraceId.ToString(),
-                    ["exception_type"] = exception.GetType().FullName
+                    ["trace_id"] = Activity.Current?.TraceId.ToString(), ["exception_type"] = exception.GetType().FullName
                 }
             };
         }
@@ -63,11 +62,7 @@ internal static class ProblemDetailsExtensions
                 Detail = exception.Message,
                 Status = StatusCodes.Status400BadRequest,
                 Instance = path,
-                Extensions = new Dictionary<string, object?>
-                {
-                    ["trace_id"] = Activity.Current?.TraceId.ToString(),
-                    ["exception_type"] = exception.GetType().FullName
-                }
+                Extensions = new Dictionary<string, object?> { ["trace_id"] = Activity.Current?.TraceId.ToString(), ["exception_type"] = exception.GetType().FullName }
             };
         }
     }
@@ -82,11 +77,7 @@ internal static class ProblemDetailsExtensions
                 Detail = exception.Message,
                 Status = StatusCodes.Status409Conflict,
                 Instance = path,
-                Extensions = new Dictionary<string, object?>
-                {
-                    ["trace_id"] = Activity.Current?.TraceId.ToString(),
-                    ["exception_type"] = exception.GetType().FullName
-                }
+                Extensions = new Dictionary<string, object?> { ["trace_id"] = Activity.Current?.TraceId.ToString(), ["exception_type"] = exception.GetType().FullName }
             };
         }
     }
@@ -101,11 +92,7 @@ internal static class ProblemDetailsExtensions
                 Detail = exception.Message,
                 Status = StatusCodes.Status404NotFound,
                 Instance = path,
-                Extensions = new Dictionary<string, object?>
-                {
-                    ["trace_id"] = Activity.Current?.TraceId.ToString(),
-                    ["exception_type"] = exception.GetType().FullName
-                }
+                Extensions = new Dictionary<string, object?> { ["trace_id"] = Activity.Current?.TraceId.ToString(), ["exception_type"] = exception.GetType().FullName }
             };
         }
     }
@@ -120,11 +107,7 @@ internal static class ProblemDetailsExtensions
                 Detail = exception.Message,
                 Status = StatusCodes.Status503ServiceUnavailable,
                 Instance = path,
-                Extensions = new Dictionary<string, object?>
-                {
-                    ["trace_id"] = Activity.Current?.TraceId.ToString(),
-                    ["exception_type"] = exception.GetType().FullName
-                }
+                Extensions = new Dictionary<string, object?> { ["trace_id"] = Activity.Current?.TraceId.ToString(), ["exception_type"] = exception.GetType().FullName }
             };
         }
     }

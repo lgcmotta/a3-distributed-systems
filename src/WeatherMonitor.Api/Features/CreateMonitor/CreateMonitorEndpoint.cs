@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Security.Claims;
+using WeatherMonitor.Api.Extensions;
 using WeatherMonitor.Api.Shared;
 
 namespace WeatherMonitor.Api.Features.CreateMonitor;
@@ -36,7 +37,12 @@ internal static class CreateMonitorEndpoint
         ClaimsPrincipal principal,
         CancellationToken cancellationToken = default)
     {
-        CreateMonitorRequest command = body with { ClientId = principal.Identity!.Name ?? string.Empty };
+        if (principal.Identity is null || string.IsNullOrWhiteSpace(principal.Identity.Name))
+        {
+            return Results.Unauthorized();
+        }
+
+        CreateMonitorRequest command = body with { ClientId = principal.Identity.Name };
 
         var response = await mediator.Send(command, cancellationToken);
 
