@@ -21,7 +21,8 @@ internal static class ProblemDetailsExtensions
                 Instance = path,
                 Extensions = new Dictionary<string, object?>
                 {
-                    ["trace_id"] = Activity.Current?.TraceId.ToString(), ["exception_type"] = exception.GetType().FullName
+                    ["trace_id"] = Activity.Current?.TraceId.ToString(),
+                    ["exception_type"] = exception.GetType().FullName
                 }
             };
         }
