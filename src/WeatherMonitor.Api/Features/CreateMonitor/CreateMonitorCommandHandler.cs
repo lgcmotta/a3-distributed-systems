@@ -40,7 +40,7 @@ internal partial class CreateMonitorCommandHandler(
 
         if (city is null)
         {
-            LogErrorFoundCitiesNotMachedRequest(request.City, request.State);
+            LogErrorFoundCitiesNotMatchedRequest(request.City, request.State);
 
             throw new MonitorCityNotFoundException(request.City, request.State);
         }
@@ -94,7 +94,7 @@ internal partial class CreateMonitorCommandHandler(
 
     [LoggerMessage(Level = LogLevel.Error,
         Message = "None of the found cities with name {CityName} appears to belong to state {State}")]
-    private partial void LogErrorFoundCitiesNotMachedRequest(string cityName, string state);
+    private partial void LogErrorFoundCitiesNotMatchedRequest(string cityName, string state);
 
     [LoggerMessage(Level = LogLevel.Error,
         Message = "Duplicated monitor prevent. Clint ID {ClientId} already has a monitor configured for {CityName}, {State}, {Time} and {TimeZoneId}")]
