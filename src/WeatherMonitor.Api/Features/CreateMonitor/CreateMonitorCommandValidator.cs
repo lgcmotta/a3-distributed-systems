@@ -8,14 +8,12 @@ internal sealed class CreateMonitorCommandValidator : AbstractValidator<CreateMo
     public CreateMonitorCommandValidator()
     {
         RuleFor(request => request.City)
-            .Cascade(CascadeMode.Stop)
             .NotEmpty()
             .WithMessage("must not be empty")
             .MaximumLength(100)
             .WithMessage("must be at most 100 characters");
 
         RuleFor(request => request.State)
-            .Cascade(CascadeMode.Stop)
             .NotEmpty()
             .WithMessage("must not be empty")
             .Length(2)
@@ -24,7 +22,6 @@ internal sealed class CreateMonitorCommandValidator : AbstractValidator<CreateMo
             .WithMessage("must be a valid Brazilian state acronym");
 
         RuleFor(request => request.WeatherConditionCode)
-            .Cascade(CascadeMode.Stop)
             .NotEmpty()
             .WithMessage("must not be empty")
             .MaximumLength(3)
@@ -33,7 +30,6 @@ internal sealed class CreateMonitorCommandValidator : AbstractValidator<CreateMo
             .WithMessage("must contain only ASCII letters");
 
         RuleFor(request => request.WebhookUrl)
-            .Cascade(CascadeMode.Stop)
             .NotEmpty()
             .WithMessage("must not be empty")
             .MaximumLength(500)
@@ -44,7 +40,6 @@ internal sealed class CreateMonitorCommandValidator : AbstractValidator<CreateMo
             .WithMessage("must use HTTP or HTTPS scheme");
 
         RuleFor(request => request.TimeZoneId)
-            .Cascade(CascadeMode.Stop)
             .NotEmpty()
             .WithMessage("must not be empty")
             .MaximumLength(50)
@@ -53,7 +48,6 @@ internal sealed class CreateMonitorCommandValidator : AbstractValidator<CreateMo
             .WithMessage("must be a valid time zone ID");
 
         RuleFor(request => request.AccessToken)
-            .Cascade(CascadeMode.Stop)
             .Must(accessToken => accessToken is null || !string.IsNullOrWhiteSpace(accessToken))
             .WithMessage("must not be empty when provided")
             .MaximumLength(500)
