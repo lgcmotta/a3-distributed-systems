@@ -137,7 +137,7 @@ internal static class ServiceCollectionExtensions
             services.AddTransient<CachingHandler>();
 
             services
-                .AddRefitClient<ICptecRefitApi>()
+                .AddRefitClient<IBrasilApiClient>()
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(brasilApiUrl))
                 .AddHttpMessageHandler<CachingHandler>()
                 .AddStandardResilienceHandler(options =>

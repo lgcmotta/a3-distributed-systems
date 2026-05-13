@@ -84,8 +84,7 @@ namespace WeatherMonitor.Api.Infrastructure.Persistence.Migrations
                                 {
                                     b2.IsRequired();
 
-                                    b2.Property<string>("Code")
-                                        .IsRequired()
+                                    b2.Property<int>("Code")
                                         .HasJsonPropertyName("code");
 
                                     b2.Property<string>("Name")
@@ -159,10 +158,8 @@ namespace WeatherMonitor.Api.Infrastructure.Persistence.Migrations
                         {
                             b1.IsRequired();
 
-                            b1.Property<string>("CityCode")
-                                .IsRequired()
-                                .HasMaxLength(12)
-                                .HasColumnType("character varying(12)")
+                            b1.Property<int>("CityCode")
+                                .HasColumnType("integer")
                                 .HasColumnName("monitor_location_city_code");
 
                             b1.Property<string>("CityName")

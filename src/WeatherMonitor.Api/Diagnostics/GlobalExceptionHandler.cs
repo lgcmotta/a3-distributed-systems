@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Diagnostics;
 using System.Net.Mime;
 using System.Text.Json;
 using WeatherMonitor.Api.Extensions;
+using WeatherMonitor.Api.Infrastructure.Clients.Exceptions;
+using WeatherMonitor.Domain.Monitors.Exceptions;
 
 namespace WeatherMonitor.Api.Diagnostics;
 
@@ -15,10 +17,13 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
         var problemDetails = exception switch
         {
             ValidationException e => e.ToProblemDetails(instance),
+            MonitorCityNotFoundException e => e.ToProblemDetails(instance),
+            DuplicateWeatherMonitorException e => e.ToProblemDetails(instance),
+            CityLookupFailedException e => e.ToProblemDetails(instance),
+            CityLookupUnavailableException e => e.ToProblemDetails(instance),
             ArgumentNullException e => e.ToProblemDetails(instance),
             ArgumentOutOfRangeException e => e.ToProblemDetails(instance),
             ArgumentException e => e.ToProblemDetails(instance),
-            // TODO: add missing or custom exception cases here
             _ => exception.ToProblemDetails(instance)
         };
 

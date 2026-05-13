@@ -26,11 +26,11 @@ internal static class GetWeatherConditionsEndpoint
     }
 
     private static async Task<IResult> GetWeatherConditionCodesAsync(
-        [AsParameters] GetWeatherConditionsQuery query,
+        [AsParameters] GetWeatherConditionsRequest query,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken = default)
     {
-        (IEnumerable<WeatherConditionResponse> response, PagedResponseModel pagination) = await mediator.Send(query, cancellationToken);
+        (IEnumerable<WeatherConditionResponse> response, PagedResponse pagination) = await mediator.Send(query, cancellationToken);
 
         return Results.Ok(new PagedApiResponse<IEnumerable<WeatherConditionResponse>>(response, pagination));
     }

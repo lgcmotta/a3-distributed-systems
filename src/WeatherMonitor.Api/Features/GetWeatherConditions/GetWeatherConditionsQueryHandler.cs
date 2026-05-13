@@ -5,9 +5,9 @@ using WeatherMonitor.Domain.Monitors.ValueObjects;
 
 namespace WeatherMonitor.Api.Features.GetWeatherConditions;
 
-internal sealed class GetWeatherConditionsQueryHandler : IRequestHandler<GetWeatherConditionsQuery, (IEnumerable<WeatherConditionResponse>, PagedResponseModel)>
+internal sealed class GetWeatherConditionsQueryHandler : IRequestHandler<GetWeatherConditionsRequest, (IEnumerable<WeatherConditionResponse>, PagedResponse)>
 {
-    public Task<(IEnumerable<WeatherConditionResponse>, PagedResponseModel)> Handle(GetWeatherConditionsQuery request, CancellationToken cancellationToken)
+    public Task<(IEnumerable<WeatherConditionResponse>, PagedResponse)> Handle(GetWeatherConditionsRequest request, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -25,7 +25,7 @@ internal sealed class GetWeatherConditionsQueryHandler : IRequestHandler<GetWeat
             .Select(condition => new WeatherConditionResponse(condition.Code, condition.Description))
             .ToList();
 
-        var pagination = new PagedResponseModel
+        var pagination = new PagedResponse
         {
             Page = request.Page,
             Size = request.Size,
@@ -35,6 +35,6 @@ internal sealed class GetWeatherConditionsQueryHandler : IRequestHandler<GetWeat
             TotalPages = totalPages
         };
 
-        return Task.FromResult<(IEnumerable<WeatherConditionResponse>, PagedResponseModel)>((response, pagination));
+        return Task.FromResult<(IEnumerable<WeatherConditionResponse>, PagedResponse)>((response, pagination));
     }
 }

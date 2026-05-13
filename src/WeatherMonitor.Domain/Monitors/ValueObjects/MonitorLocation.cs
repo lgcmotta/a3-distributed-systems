@@ -1,3 +1,5 @@
+using WeatherMonitor.Domain.Core;
+
 namespace WeatherMonitor.Domain.Monitors.ValueObjects;
 
 public sealed record MonitorLocation
@@ -7,16 +9,9 @@ public sealed record MonitorLocation
 
     }
 
-    private MonitorLocation(string cityCode, string cityName, string state) : this()
+    internal static MonitorLocation Create(int cityCode, string cityName, string state)
     {
-        CityCode = cityCode;
-        CityName = cityName;
-        State = state;
-    }
-
-    internal static MonitorLocation Create(string cityCode, string cityName, string state)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(cityCode);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(cityCode);
         ArgumentException.ThrowIfNullOrWhiteSpace(cityName);
         ArgumentException.ThrowIfNullOrWhiteSpace(state);
 
@@ -25,17 +20,22 @@ public sealed record MonitorLocation
             throw new ArgumentException("State (UF) must have exactly 2 characters.", nameof(state));
         }
 
+        if (!Enumeration.TryParseByValue<BrazilianState>(state.Trim().ToUpperInvariant(), out var brazilianState))
+        {
+            throw new ArgumentException("State (UF) must be a valid Brazilian state.", nameof(state));
+        }
+
         return new MonitorLocation
         {
-            CityCode = cityCode.Trim(),
+            CityCode = cityCode,
             CityName = cityName.Trim(),
-            State = state.Trim().ToUpperInvariant()
+            State = brazilianState
         };
     }
 
-    public required string CityCode { get; init; }
+    public required int CityCode { get; init; }
 
     public required string CityName { get; init; }
 
-    public required string State { get; init; }
+    public required BrazilianState State { get; init; }
 }

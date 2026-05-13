@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace WeatherMonitor.Api.Features.GetWeatherConditions;
 
-internal sealed class GetWeatherConditionsQueryValidator : AbstractValidator<GetWeatherConditionsQuery>
+internal sealed class GetWeatherConditionsQueryValidator : AbstractValidator<GetWeatherConditionsRequest>
 {
     public GetWeatherConditionsQueryValidator()
     {
