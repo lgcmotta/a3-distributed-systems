@@ -39,7 +39,9 @@ internal sealed class CreateMonitorCommandValidator : AbstractValidator<CreateMo
             .MaximumLength(500)
             .WithMessage("must be at most 500 characters")
             .Must(BeWellFormedAbsoluteUri)
-            .WithMessage("must be a well-formed absolute URI");
+            .WithMessage("must be a well-formed absolute URI")
+            .Must(BeHttpOrHttps)
+            .WithMessage("must use HTTP or HTTPS scheme");
 
         RuleFor(request => request.TimeZoneId)
             .Cascade(CascadeMode.Stop)
@@ -61,6 +63,9 @@ internal sealed class CreateMonitorCommandValidator : AbstractValidator<CreateMo
     private static bool BeAsciiLetters(string value) => value.All(char.IsAsciiLetter);
 
     private static bool BeWellFormedAbsoluteUri(string value) => Uri.IsWellFormedUriString(value, UriKind.Absolute);
+
+    private static bool BeHttpOrHttps(string value) => Uri.TryCreate(value, UriKind.Absolute, out var uri) &&
+                                                       (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
 
     private static bool BeKnownTimeZoneId(string value) => TimeZoneInfo.TryFindSystemTimeZoneById(value, out _);
 }
