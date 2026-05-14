@@ -112,4 +112,19 @@ internal static class ProblemDetailsExtensions
             };
         }
     }
+    
+    extension(WeatherConditionCodeNotFoundException exception)
+    {
+        internal ProblemDetails ToProblemDetails(string path)
+        {
+            return new ProblemDetails
+            {
+                Title = "Weather Condition Not Found",
+                Detail = exception.Message,
+                Status = StatusCodes.Status404NotFound,
+                Instance = path,
+                Extensions = new Dictionary<string, object?> { ["trace_id"] = Activity.Current?.TraceId.ToString(), ["exception_type"] = exception.GetType().FullName }
+            };
+        }
+    }
 }
