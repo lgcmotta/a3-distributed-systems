@@ -103,7 +103,7 @@ internal sealed partial class WebhookMonitorDispatcher(
 
     private HttpRequestMessage CreateWebhookHttpRequest(WebhookDelivery delivery, WeatherMonitorConfiguration monitor)
     {
-        var content = JsonContent.Create(delivery.Payload, new MediaTypeHeaderValue(MediaTypeNames.Application.Json, Encoding.UTF8.EncodingName));
+        var content = JsonContent.Create(delivery.Payload, new MediaTypeHeaderValue(MediaTypeNames.Application.Json, charSet: "utf-8"));
 
         var request = new HttpRequestMessage
         {

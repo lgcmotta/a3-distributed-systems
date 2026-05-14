@@ -7,6 +7,7 @@ using TickerQ.Utilities.Interfaces.Managers;
 using WeatherMonitor.Api.Infrastructure.Clients.Interfaces;
 using WeatherMonitor.Api.Infrastructure.Persistence;
 using WeatherMonitor.Domain.Deliveries;
+using WeatherMonitor.Domain.Deliveries.ValueObjects;
 
 namespace WeatherMonitor.Api.Features.MonitorProcessing;
 
@@ -52,7 +53,9 @@ internal sealed partial class WeatherMonitorProcessor(
 
                 if (await db.Deliveries.AnyAsync(delivery => delivery.ScheduledFor == scheduled &&
                                                              delivery.Payload.ClientId == monitor.ClientId &&
-                                                             delivery.Payload.MonitorId == monitor.Id, cancellationToken))
+                                                             delivery.Payload.MonitorId == monitor.Id &&
+                                                             (delivery.Status == WebhookDeliveryStatus.Pending ||
+                                                              delivery.Status == WebhookDeliveryStatus.Delivered), cancellationToken))
                 {
                     continue;
                 }

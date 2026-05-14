@@ -19,6 +19,6 @@ public sealed record BrasilApiWeather
     [JsonPropertyName("indice_uv")]
     public int UvIndex { get; init; } = 0;
 
-    [JsonPropertyName("condition_desc")]
+    [JsonPropertyName("condicao_desc")]
     public string Description { get; init; } = string.Empty;
 }
