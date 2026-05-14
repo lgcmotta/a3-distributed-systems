@@ -4,66 +4,39 @@ namespace AppHost.Extensions;
 
 internal static class DockerSamplesResourceBuilderExtensions
 {
+    private sealed record SampleApp(string Name, string Language, int Port);
+
+    private static readonly IReadOnlyList<SampleApp> SampleApps =
+    [
+        new(Name: "Sample-NodeJS", Language: "nodejs", Port: 3000),
+        new(Name: "Sample-Go", Language: "go", Port: 8080),
+        new(Name: "Sample-Python", Language: "python", Port: 5000)
+    ];
+
     extension(IDistributedApplicationBuilder builder)
     {
-        internal IResourceBuilder<ContainerResource> AddSampleApiNodeJS()
+        internal void AddSampleApps()
         {
             var rootDirectory = DirectoryHelper.FindRepositoryRoot();
 
-            var contextPath = Path.Join(rootDirectory, "samples", "nodejs");
+            foreach (var app in SampleApps)
+            {
+                var contextPath = Path.Join(rootDirectory, "samples", app.Language);
 
-            return builder.AddDockerfile(name: "Sample-NodeJS", contextPath, dockerfilePath: "Dockerfile")
-                .WithContainerName(name: "samples-nodejs")
-                .WithImage(image: "weather-monitor/samples/nodejs", tag: "latest")
-                .WithLifetime(lifetime: ContainerLifetime.Persistent)
-                .WithHttpEndpoint(
-                    targetPort: 3000,
-                    name: "http",
-                    env: "PORT")
-                .WithHttpHealthCheck(
-                    path: "/healthz",
-                    statusCode: 200,
-                    endpointName: "http");
-        }
-
-        internal IResourceBuilder<ContainerResource> AddSampleApiGo()
-        {
-            var rootDirectory = DirectoryHelper.FindRepositoryRoot();
-
-            var contextPath = Path.Join(rootDirectory, "samples", "go");
-
-            return builder.AddDockerfile(name: "Sample-Go", contextPath, dockerfilePath: "Dockerfile")
-                .WithContainerName(name: "samples-go")
-                .WithImage(image: "weather-monitor/samples/go", tag: "latest")
-                .WithLifetime(lifetime: ContainerLifetime.Persistent)
-                .WithHttpEndpoint(
-                    targetPort: 8080,
-                    name: "http",
-                    env: "PORT")
-                .WithHttpHealthCheck(
-                    path: "/healthz",
-                    statusCode: 200,
-                    endpointName: "http");
-        }
-
-        internal IResourceBuilder<ContainerResource> AddSampleApiPython()
-        {
-            var rootDirectory = DirectoryHelper.FindRepositoryRoot();
-
-            var contextPath = Path.Join(rootDirectory, "samples", "python");
-
-            return builder.AddDockerfile(name: "Sample-Python", contextPath, dockerfilePath: "Dockerfile")
-                .WithContainerName(name: "samples-python")
-                .WithImage(image: "weather-monitor/samples/python", tag: "latest")
-                .WithLifetime(lifetime: ContainerLifetime.Persistent)
-                .WithHttpEndpoint(
-                    targetPort: 5000,
-                    name: "http",
-                    env: "PORT")
-                .WithHttpHealthCheck(
-                    path: "/healthz",
-                    statusCode: 200,
-                    endpointName: "http");
+                builder.AddDockerfile(name: app.Name, contextPath, dockerfilePath: "Dockerfile")
+                    .WithContainerName(name: $"samples-{app.Language}")
+                    .WithImage(image: $"weather-monitor/samples/{app.Language}", tag: "latest")
+                    .WithLifetime(lifetime: ContainerLifetime.Persistent)
+                    .WithHttpEndpoint(
+                        targetPort: app.Port,
+                        name: "http",
+                        env: "PORT")
+                    .WithHttpHealthCheck(
+                        path: "/healthz",
+                        statusCode: 200,
+                        endpointName: "http"
+                    );
+            }
         }
     }
 }

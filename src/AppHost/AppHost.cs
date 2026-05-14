@@ -14,11 +14,7 @@ var dotnet = builder.AddDotNetEfDatabaseUpdateCommand(database);
 
 builder.AddWeatherMonitorProject(keycloak, redis, database, dotnet);
 
-builder.AddSampleApiNodeJS();
-
-builder.AddSampleApiGo();
-
-builder.AddSampleApiPython();
+builder.AddSampleApps();
 
 var app = builder.Build();
 
