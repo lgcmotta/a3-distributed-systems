@@ -20,7 +20,10 @@ internal static class WeatherMonitorResourceBuilderExtensions
                 .WaitFor(redis)
                 .WaitFor(database)
                 .WaitForCompletion(dotnet)
-                .WithUrl("/scalar", displayText: "Scalar")
+                .WithUrlForEndpoint("http", _ => new ResourceUrlAnnotation { Url = "/scalar", DisplayText = "Scalar" })
+                .WithUrlForEndpoint("http", _ => new ResourceUrlAnnotation { Url = "/tickerq/dashboard", DisplayText = "TickerQ" })
+                .WithUrls(context => context.Urls.RemoveAll(url => url.Endpoint is { EndpointName: "http" } &&
+                                                                   string.IsNullOrWhiteSpace(url.DisplayText)))
                 .WithHttpHealthCheck("/healthz/ready")
                 .WithHttpHealthCheck("/healthz/live")
                 .WithEnvironment("BrasilApiUrl", brasilApi)

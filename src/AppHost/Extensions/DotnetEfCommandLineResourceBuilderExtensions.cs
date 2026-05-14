@@ -1,3 +1,5 @@
+using AppHost.Helpers;
+
 namespace AppHost.Extensions;
 
 internal static class DotnetEfCommandLineResourceBuilderExtensions
@@ -7,7 +9,7 @@ internal static class DotnetEfCommandLineResourceBuilderExtensions
         internal IResourceBuilder<ExecutableResource> AddDotNetEfDatabaseUpdateCommand(
             IResourceBuilder<PostgresDatabaseResource> database)
         {
-            var workingDirectory = FindRepositoryRoot();
+            var workingDirectory = DirectoryHelper.FindRepositoryRoot();
 
             var cli = builder.AddExecutable(
                     name: "dotnet-ef",
@@ -28,24 +30,5 @@ internal static class DotnetEfCommandLineResourceBuilderExtensions
 
             return cli;
         }
-    }
-
-    private static string FindRepositoryRoot()
-    {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-
-        while (directory is not null)
-        {
-            var solutionFile = Path.Combine(directory.FullName, "WeatherMonitor.slnx");
-
-            if (File.Exists(solutionFile))
-            {
-                return directory.FullName;
-            }
-
-            directory = directory.Parent;
-        }
-
-        throw new DirectoryNotFoundException("Could not find repository root.");
     }
 }
