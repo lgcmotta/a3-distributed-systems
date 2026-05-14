@@ -1,14 +1,18 @@
 using Asp.Versioning;
 using FluentValidation;
-using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
 using Keycloak.AuthServices.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Refit;
 using System.Reflection;
+using TickerQ.Dashboard.DependencyInjection;
+using TickerQ.DependencyInjection;
+using TickerQ.EntityFrameworkCore.Customizer;
+using TickerQ.EntityFrameworkCore.DependencyInjection;
 using WeatherMonitor.Api.Behaviors;
 using WeatherMonitor.Api.Diagnostics;
-using WeatherMonitor.Api.Infrastructure.Clients;
+using WeatherMonitor.Api.Features.MonitorProcessing;
 using WeatherMonitor.Api.Infrastructure.Clients.Handlers;
 using WeatherMonitor.Api.Infrastructure.Clients.Interfaces;
 using WeatherMonitor.Api.Infrastructure.Keycloak;
@@ -157,6 +161,8 @@ internal static class ServiceCollectionExtensions
 
         internal IServiceCollection AddAppDbContext()
         {
+            services.AddSingleton<IInterceptor, AuditableEntitySaveChangesInterceptor>();
+
             services.AddDbContext<AppDbContext>((provider, options) =>
             {
                 var configuration = provider.GetRequiredService<IConfiguration>();
@@ -165,15 +171,30 @@ internal static class ServiceCollectionExtensions
 
                 options.UseNpgsql(connectionString, builder => builder.EnableRetryOnFailure(3));
 
-                var interceptors = InterceptorAssemblyScanner.Scan(provider, Assembly.GetCallingAssembly());
+                var interceptors = provider.GetServices<IInterceptor>();
 
-                if (interceptors is { Length: 0 })
+                if (interceptors.TryGetNonEnumeratedCount(out var count) && count > 0)
                 {
-                    return;
+                    options.AddInterceptors(interceptors);
                 }
-
-                options.AddInterceptors(interceptors);
             });
+
+            return services;
+        }
+
+        internal IServiceCollection AddScheduledJobs()
+        {
+            services.AddTickerQ(options =>
+            {
+                options.AddDashboard();
+                options.AddOperationalStore(ef => ef.UseApplicationDbContext<AppDbContext>(ConfigurationType.IgnoreModelCustomizer));
+            });
+
+            services.MapTicker<WeatherMonitorProcessor>()
+                .WithCron("*/2 * * * *")
+                .WithMaxConcurrency(1);
+
+            services.MapTicker<WebhookMonitorDispatcher, WebhookDeliveryEnvelope>();
 
             return services;
         }

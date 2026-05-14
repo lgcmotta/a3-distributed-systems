@@ -85,4 +85,20 @@ public sealed class WeatherMonitorConfiguration : IAggregateRoot
                && weatherCondition is not null
                && WeatherCondition.Code == weatherCondition.Code;
     }
+
+    public DateTime CalculateDeliverySchedule(DateTimeOffset now)
+    {
+        var timeZone = TimeZoneInfo.FindSystemTimeZoneById(Webhook.TimeZoneId);
+
+        var local = TimeZoneInfo.ConvertTime(now, timeZone);
+
+        var scheduled = DateOnly.FromDateTime(local.DateTime).ToDateTime(Webhook.ScheduleFor, DateTimeKind.Unspecified);
+
+        if (scheduled <= local.DateTime)
+        {
+            scheduled = scheduled.AddDays(1);
+        }
+
+        return TimeZoneInfo.ConvertTimeToUtc(scheduled, timeZone);
+    }
 }

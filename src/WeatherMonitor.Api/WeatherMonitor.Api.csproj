@@ -26,11 +26,19 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="Scalar.AspNetCore" />
     <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="TickerQ" />
+    <PackageReference Include="TickerQ.Dashboard" />
+    <PackageReference Include="TickerQ.EntityFrameworkCore" />
+    <PackageReference Include="TickerQ.Instrumentation.OpenTelemetry" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\WeatherMonitor.Domain\WeatherMonitor.Domain.csproj" />
     <ProjectReference Include="..\WeatherMonitor.ServiceDefaults\WeatherMonitor.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Infrastructure\Envelopes\" />
   </ItemGroup>
 
 </Project>

@@ -35,5 +35,9 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
     <PackageVersion Include="System.CommandLine" Version="2.0.7" />
+    <PackageVersion Include="TickerQ" Version="10.4.0" />
+    <PackageVersion Include="TickerQ.Dashboard" Version="10.4.0" />
+    <PackageVersion Include="TickerQ.EntityFrameworkCore" Version="10.4.0" />
+    <PackageVersion Include="TickerQ.Instrumentation.OpenTelemetry" Version="10.4.0" />
   </ItemGroup>
 </Project>

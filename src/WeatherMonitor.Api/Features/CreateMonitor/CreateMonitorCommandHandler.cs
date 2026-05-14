@@ -12,7 +12,7 @@ using WeatherMonitor.Domain.Monitors.Exceptions;
 
 namespace WeatherMonitor.Api.Features.CreateMonitor;
 
-internal partial class CreateMonitorCommandHandler(
+internal sealed partial class CreateMonitorCommandHandler(
     ILogger<CreateMonitorCommandHandler> logger,
     IBrasilApiClient api,
     AppDbContext context

@@ -46,6 +46,7 @@ public sealed class WebhookDelivery : IAggregateRoot
 
         ScheduledFor = scheduledFor;
         Status = WebhookDeliveryStatus.Pending;
+        RetryCount = 0;
         Payload = new DeliveryPayload
         {
             MonitorId = monitorId,
@@ -128,7 +129,7 @@ public sealed class WebhookDelivery : IAggregateRoot
         FailureReason = null;
     }
 
-    public void MarkFailed(string? reason)
+    public void MarkFailed(string? reason = null)
     {
         if (Status.IsFailed())
         {
@@ -146,5 +147,20 @@ public sealed class WebhookDelivery : IAggregateRoot
         {
             FailureReason = reason.Trim();
         }
+    }
+
+    public bool IsDelivered()
+    {
+        return Status.IsDelivered();
+    }
+
+    public bool IsFailed()
+    {
+        return Status.IsFailed();
+    }
+
+    public bool IsPending()
+    {
+        return Status.IsPending();
     }
 }

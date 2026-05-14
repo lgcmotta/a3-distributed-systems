@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using System.CommandLine;
+using TickerQ.EntityFrameworkCore.Configurations;
+using TickerQ.Utilities.Entities;
 using WeatherMonitor.Domain.Deliveries;
 using WeatherMonitor.Domain.Monitors;
 
@@ -14,6 +16,10 @@ internal sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbC
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+
+        modelBuilder.ApplyConfiguration(new TimeTickerConfigurations<TimeTickerEntity>());
+        modelBuilder.ApplyConfiguration(new CronTickerConfigurations<CronTickerEntity>());
+        modelBuilder.ApplyConfiguration(new CronTickerOccurrenceConfigurations<CronTickerEntity>());
     }
 }
 

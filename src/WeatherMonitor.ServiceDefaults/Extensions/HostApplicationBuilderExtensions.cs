@@ -64,7 +64,8 @@ public static class HostApplicationBuilderExtensions
                         .AddAspNetCoreInstrumentation(options => options.Filter = context => context.IsNotHealthCheck())
                         .AddHttpClientInstrumentation()
                         .AddEntityFrameworkCoreInstrumentation()
-                        .AddSource("Microsoft.Extensions.Caching.Hybrid");
+                        .AddSource("Microsoft.Extensions.Caching.Hybrid")
+                        .AddSource("TickerQ");
                 });
 
             builder.AddOpenTelemetryExporters();

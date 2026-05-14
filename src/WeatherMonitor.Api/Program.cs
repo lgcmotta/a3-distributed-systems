@@ -20,6 +20,7 @@ builder.Services.AddCaching(builder.Configuration);
 builder.Services.AddBrasilApiClient(builder.Configuration);
 builder.Services.AddTimeProvider();
 builder.Services.AddAppDbContext();
+builder.Services.AddScheduledJobs();
 
 if (builder.Environment.IsDevelopment())
 {
@@ -46,5 +47,7 @@ var api = app.MapApiGroup();
 
 api.MapGetWeatherConditionCodes(v1);
 api.MapPostCreateMonitor(v1);
+
+app.UseScheduledJobs();
 
 await app.RunAsync();
