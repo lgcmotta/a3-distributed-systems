@@ -63,7 +63,7 @@ internal sealed partial class WebhookMonitorDispatcher(
 
         if (monitor is { Enabled: false })
         {
-            delivery.MarkFailed();
+            delivery.MarkFailed("Monitor was disabled before webhook dispatch.");
 
             await db.SaveChangesAsync(cancellationToken);
 
