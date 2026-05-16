@@ -112,7 +112,7 @@ internal sealed partial class WebhookMonitorDispatcher(
 
     private HttpRequestMessage CreateWebhookHttpRequest(WebhookDelivery delivery, WeatherMonitorConfiguration monitor)
     {
-        var content = JsonContent.Create(delivery.Payload, new MediaTypeHeaderValue(MediaTypeNames.Application.Json, charSet: "utf-8"));
+        var content = JsonContent.Create(delivery.ToWebhookDeliveryPayload(), new MediaTypeHeaderValue(MediaTypeNames.Application.Json, charSet: "utf-8"));
 
         var request = new HttpRequestMessage
         {
@@ -147,4 +147,24 @@ internal sealed partial class WebhookMonitorDispatcher(
 
     [LoggerMessage(LogLevel.Error, "Delivery with '{DeliveryId}' failed to be sent")]
     partial void LogWebhookDeliverySendFailed(Guid deliveryId, Exception exception);
+}
+
+file static class WebhookMonitorDispatcherExtensions
+{
+    extension(WebhookDelivery delivery)
+    {
+        internal WebhookDeliveryPayload ToWebhookDeliveryPayload()
+        {
+            return new WebhookDeliveryPayload(
+                delivery.Id,
+                delivery.Payload.MonitorId,
+                delivery.Payload.ClientId,
+                delivery.Payload.ForecastDate,
+                delivery.Payload.Location.Code,
+                delivery.Payload.Location.Name,
+                delivery.Payload.Location.State,
+                delivery.Payload.WeatherCondition.Code,
+                delivery.Payload.WeatherCondition.Description);
+        }
+    }
 }
