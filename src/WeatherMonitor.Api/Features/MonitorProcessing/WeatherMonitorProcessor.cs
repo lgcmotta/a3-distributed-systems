@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using TickerQ.Utilities;
 using TickerQ.Utilities.Base;
@@ -11,6 +12,7 @@ using WeatherMonitor.Domain.Deliveries.ValueObjects;
 
 namespace WeatherMonitor.Api.Features.MonitorProcessing;
 
+[UsedImplicitly]
 internal sealed partial class WeatherMonitorProcessor(
     ILogger<WeatherMonitorProcessor> logger,
     IBrasilApiClient api,
@@ -33,7 +35,11 @@ internal sealed partial class WeatherMonitorProcessor(
                     continue;
                 }
 
-                var weather = response.Content.Weather.FirstOrDefault();
+                var now = time.GetUtcNow();
+
+                var forecastDate = monitor.CalculateForecastDate(now);
+
+                var weather = response.Content.Weather.FirstOrDefault(weather => weather.Date == forecastDate);
 
                 if (weather is null)
                 {
@@ -46,8 +52,6 @@ internal sealed partial class WeatherMonitorProcessor(
                     LogWeatherConditionNotMatched(monitor.Id);
                     continue;
                 }
-
-                var now = time.GetUtcNow();
 
                 var scheduled = monitor.CalculateDeliverySchedule(now);
 
@@ -63,7 +67,7 @@ internal sealed partial class WeatherMonitorProcessor(
                 var delivery = new WebhookDelivery(
                     monitor.Id,
                     monitor.ClientId,
-                    DateOnly.FromDateTime(weather.Date),
+                    weather.Date,
                     scheduled,
                     monitor.Location.CityCode,
                     monitor.Location.CityName,

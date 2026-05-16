@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using System.Net.Http.Headers;
 using System.Net.Mime;
-using System.Text;
 using TickerQ.Utilities.Base;
 using TickerQ.Utilities.Interfaces;
 using WeatherMonitor.Api.Infrastructure.Persistence;
@@ -65,6 +64,16 @@ internal sealed partial class WebhookMonitorDispatcher(
         if (monitor is { Enabled: false })
         {
             delivery.MarkFailed();
+
+            await db.SaveChangesAsync(cancellationToken);
+
+            return;
+        }
+
+        if (!delivery.Payload.MonitorId.Equals(monitor.Id) ||
+            !string.Equals(delivery.Payload.ClientId, monitor.ClientId, StringComparison.Ordinal))
+        {
+            delivery.MarkFailed("Webhook delivery does not match the current monitor configuration.");
 
             await db.SaveChangesAsync(cancellationToken);
 

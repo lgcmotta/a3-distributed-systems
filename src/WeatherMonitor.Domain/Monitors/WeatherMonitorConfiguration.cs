@@ -86,11 +86,11 @@ public sealed class WeatherMonitorConfiguration : IAggregateRoot
                && WeatherCondition.Code == weatherCondition.Code;
     }
 
-    public DateTime CalculateDeliverySchedule(DateTimeOffset now)
+    public DateTime CalculateDeliverySchedule(DateTimeOffset utcNow)
     {
         var timeZone = TimeZoneInfo.FindSystemTimeZoneById(Webhook.TimeZoneId);
 
-        var local = TimeZoneInfo.ConvertTime(now, timeZone);
+        var local = TimeZoneInfo.ConvertTime(utcNow, timeZone);
 
         var scheduled = DateOnly.FromDateTime(local.DateTime).ToDateTime(Webhook.ScheduleFor, DateTimeKind.Unspecified);
 
@@ -100,5 +100,14 @@ public sealed class WeatherMonitorConfiguration : IAggregateRoot
         }
 
         return TimeZoneInfo.ConvertTimeToUtc(scheduled, timeZone);
+    }
+
+    public DateOnly CalculateForecastDate(DateTimeOffset utcNow)
+    {
+        var timeZone = TimeZoneInfo.FindSystemTimeZoneById(Webhook.TimeZoneId);
+
+        var local = TimeZoneInfo.ConvertTime(utcNow, timeZone);
+
+        return DateOnly.FromDateTime(local.DateTime).AddDays(1);
     }
 }

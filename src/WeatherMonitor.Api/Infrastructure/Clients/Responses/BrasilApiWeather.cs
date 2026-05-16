@@ -5,7 +5,7 @@ namespace WeatherMonitor.Api.Infrastructure.Clients.Responses;
 public sealed record BrasilApiWeather
 {
     [JsonPropertyName("data")]
-    public DateTime Date { get; init; } = new();
+    public DateOnly Date { get; init; } = new();
 
     [JsonPropertyName("condicao")]
     public string Condition { get; init; } = string.Empty;
