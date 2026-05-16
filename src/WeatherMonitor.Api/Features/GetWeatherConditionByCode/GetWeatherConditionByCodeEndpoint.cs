@@ -2,7 +2,6 @@ using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
-using WeatherMonitor.Api.Features.GetWeatherConditions;
 using WeatherMonitor.Api.Shared;
 
 namespace WeatherMonitor.Api.Features.GetWeatherConditionByCode;
