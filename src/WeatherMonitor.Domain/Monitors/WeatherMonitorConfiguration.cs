@@ -28,6 +28,7 @@ public sealed class WeatherMonitorConfiguration : IAggregateRoot
             throw new ArgumentException("Unknown weather condition code", nameof(weatherConditionCode));
         }
 
+        Id = Guid.CreateVersion7();
         ClientId = clientId.Trim();
         Location = MonitorLocation.Create(cityCode, cityName, state);
         WeatherCondition = weatherCondition;

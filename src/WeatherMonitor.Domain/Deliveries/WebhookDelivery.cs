@@ -44,6 +44,7 @@ public sealed class WebhookDelivery : IAggregateRoot
         ArgumentException.ThrowIfNullOrWhiteSpace(weatherConditionCode);
         ArgumentException.ThrowIfNullOrWhiteSpace(weatherConditionDescription);
 
+        Id = Guid.CreateVersion7();
         ScheduledFor = scheduledFor;
         Status = WebhookDeliveryStatus.Pending;
         RetryCount = 0;

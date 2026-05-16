@@ -78,8 +78,6 @@ internal sealed partial class WeatherMonitorProcessor(
 
                 await db.Deliveries.AddAsync(delivery, cancellationToken);
 
-                await db.SaveChangesAsync(cancellationToken);
-
                 var tickerEntity = new TimeTickerEntity
                 {
                     Function = nameof(WebhookMonitorDispatcher),
