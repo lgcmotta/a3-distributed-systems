@@ -1,7 +1,7 @@
 using MediatR;
 using WeatherMonitor.Domain.Core;
-using WeatherMonitor.Domain.Deliveries.ValueObjects;
 using WeatherMonitor.Domain.Monitors.Exceptions;
+using WeatherMonitor.Domain.Monitors.ValueObjects;
 
 namespace WeatherMonitor.Api.Features.GetWeatherConditionByCode;
 
