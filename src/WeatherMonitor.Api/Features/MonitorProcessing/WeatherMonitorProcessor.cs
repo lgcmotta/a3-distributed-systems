@@ -53,16 +53,15 @@ internal sealed partial class WeatherMonitorProcessor(
                     continue;
                 }
 
-                var scheduled = monitor.CalculateDeliverySchedule(now);
-
-                if (await db.Deliveries.AnyAsync(delivery => delivery.ScheduledFor == scheduled &&
-                                                             delivery.Payload.ClientId == monitor.ClientId &&
-                                                             delivery.Payload.MonitorId == monitor.Id &&
+                if (await db.Deliveries.AnyAsync(delivery => delivery.Payload.MonitorId == monitor.Id &&
+                                                             delivery.Payload.ForecastDate == forecastDate &&
                                                              (delivery.Status == WebhookDeliveryStatus.Pending ||
                                                               delivery.Status == WebhookDeliveryStatus.Delivered), cancellationToken))
                 {
                     continue;
                 }
+
+                var scheduled = monitor.CalculateDeliverySchedule(now);
 
                 var delivery = new WebhookDelivery(
                     monitor.Id,
