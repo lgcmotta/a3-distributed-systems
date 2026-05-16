@@ -11,6 +11,9 @@ internal static class WeatherMonitorResourceBuilderExtensions
             IResourceBuilder<ExecutableResource> dotnet)
         {
             var brasilApi = builder.AddParameter("brasil-api-url");
+            var retries = builder.AddParameter("weather-db-retries");
+            var cronExpression = builder.AddParameter("weather-monitor-processor-cron-expression");
+            var maxConcurrency = builder.AddParameter("weather-monitor-processor-max-concurrency");
 
             var weather = builder.AddProject<Projects.WeatherMonitor_Api>("WeatherMonitor")
                 .WithReference(keycloak)
@@ -27,6 +30,9 @@ internal static class WeatherMonitorResourceBuilderExtensions
                 .WithHttpHealthCheck("/healthz/ready")
                 .WithHttpHealthCheck("/healthz/live")
                 .WithEnvironment("BrasilApiUrl", brasilApi)
+                .WithEnvironment("WeatherMonitorDB__Retries", retries)
+                .WithEnvironment("WeatherMonitorProcessor__ProcessorCronExpression", cronExpression)
+                .WithEnvironment("WeatherMonitorProcessor__MaxConcurrency", maxConcurrency)
                 .WithEnvironment(context =>
                 {
                     var baseUrl = keycloak.GetEndpoint("http").Url.TrimEnd('/');

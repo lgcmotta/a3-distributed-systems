@@ -20,7 +20,7 @@ builder.Services.AddCaching(builder.Configuration);
 builder.Services.AddBrasilApiClient(builder.Configuration);
 builder.Services.AddTimeProvider();
 builder.Services.AddAppDbContext();
-builder.Services.AddScheduledJobs();
+builder.Services.AddScheduledJobs(builder.Configuration);
 
 if (builder.Environment.IsDevelopment())
 {

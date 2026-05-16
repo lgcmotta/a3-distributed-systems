@@ -169,7 +169,9 @@ internal static class ServiceCollectionExtensions
 
                 var connectionString = configuration.GetConnectionString("WeatherMonitorDB");
 
-                options.UseNpgsql(connectionString, builder => builder.EnableRetryOnFailure(3));
+                var retries = configuration.GetValue("WeatherMonitorDB:Retries", 3);
+
+                options.UseNpgsql(connectionString, builder => builder.EnableRetryOnFailure(retries));
 
                 var interceptors = provider.GetServices<IInterceptor>();
 
@@ -182,8 +184,15 @@ internal static class ServiceCollectionExtensions
             return services;
         }
 
-        internal IServiceCollection AddScheduledJobs()
+        internal IServiceCollection AddScheduledJobs(IConfiguration configuration)
         {
+            IConfigurationSection section = configuration.GetSection(WeatherMonitorProcessorOptions.SectionName);
+
+            services.AddOptions<WeatherMonitorProcessorOptions>()
+                .Bind(section);
+
+            var jobOptions = section.Get<WeatherMonitorProcessorOptions>() ?? WeatherMonitorProcessorOptions.Default();
+
             services.AddTickerQ(options =>
             {
                 options.AddDashboard();
@@ -191,8 +200,8 @@ internal static class ServiceCollectionExtensions
             });
 
             services.MapTicker<WeatherMonitorProcessor>()
-                .WithCron("*/2 * * * *")
-                .WithMaxConcurrency(1);
+                .WithCron(jobOptions.ProcessorCronExpression)
+                .WithMaxConcurrency(jobOptions.MaxConcurrency);
 
             services.MapTicker<WebhookMonitorDispatcher, WebhookDeliveryEnvelope>();
 
