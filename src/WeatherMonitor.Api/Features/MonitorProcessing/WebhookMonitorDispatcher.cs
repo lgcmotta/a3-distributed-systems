@@ -80,7 +80,7 @@ internal sealed partial class WebhookMonitorDispatcher(
             return;
         }
 
-        using var client = factory.CreateClient();
+        using var client = factory.CreateClient(nameof(WebhookMonitorDispatcher));
 
         HttpRequestMessage request = CreateWebhookHttpRequest(delivery, monitor);
 

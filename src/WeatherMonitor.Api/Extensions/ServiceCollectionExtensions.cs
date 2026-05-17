@@ -154,6 +154,13 @@ internal static class ServiceCollectionExtensions
             return services;
         }
 
+        internal IServiceCollection AddWebhookDispatcherHttpClient()
+        {
+            services.AddHttpClient(nameof(WebhookMonitorDispatcher), configureClient: client => client.Timeout = TimeSpan.FromMinutes(1));
+
+            return services;
+        }
+
         internal IServiceCollection AddTimeProvider()
         {
             return services.AddSingleton(TimeProvider.System);
