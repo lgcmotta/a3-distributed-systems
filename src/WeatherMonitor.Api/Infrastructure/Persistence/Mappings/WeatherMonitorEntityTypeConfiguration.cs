@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.ValueGeneration;
 using WeatherMonitor.Api.Infrastructure.Persistence.Extensions;
 using WeatherMonitor.Domain.Core;
 using WeatherMonitor.Domain.Monitors;
@@ -16,8 +15,6 @@ internal sealed class WeatherMonitorEntityTypeConfiguration : IEntityTypeConfigu
         builder.ToTableSnakeCaseLower();
 
         builder.SnakeCaseLowerProperty(monitor => monitor.Id)
-            .ValueGeneratedOnAdd()
-            .HasValueGenerator<GuidValueGenerator>()
             .IsRequired();
 
         builder.HasKey(monitor => monitor.Id);

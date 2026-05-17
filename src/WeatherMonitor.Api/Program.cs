@@ -2,6 +2,7 @@ using Asp.Versioning;
 using WeatherMonitor.Api.Extensions;
 using WeatherMonitor.Api.Features.CreateMonitor;
 using WeatherMonitor.Api.Features.GetMonitors;
+using WeatherMonitor.Api.Features.GetWeatherConditionByCode;
 using WeatherMonitor.Api.Features.GetWeatherConditions;
 using WeatherMonitor.ServiceDefaults.Extensions;
 
@@ -19,8 +20,10 @@ builder.Services.AddKeycloak(builder.Configuration);
 builder.Services.AddCQRS();
 builder.Services.AddCaching(builder.Configuration);
 builder.Services.AddBrasilApiClient(builder.Configuration);
+builder.Services.AddWebhookDispatcherHttpClient();
 builder.Services.AddTimeProvider();
 builder.Services.AddAppDbContext();
+builder.Services.AddScheduledJobs(builder.Configuration);
 
 if (builder.Environment.IsDevelopment())
 {
@@ -48,5 +51,8 @@ var api = app.MapApiGroup();
 api.MapGetWeatherConditionCodes(v1);
 api.MapPostCreateMonitor(v1);
 api.MapGetMonitors(v1);
+api.MapGetWeatherConditionByCodeEndpoint(v1);
+
+app.UseScheduledJobs();
 
 await app.RunAsync();

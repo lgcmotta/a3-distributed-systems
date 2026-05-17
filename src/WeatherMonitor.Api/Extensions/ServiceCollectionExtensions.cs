@@ -1,14 +1,18 @@
 using Asp.Versioning;
 using FluentValidation;
-using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
 using Keycloak.AuthServices.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Refit;
 using System.Reflection;
+using TickerQ.Dashboard.DependencyInjection;
+using TickerQ.DependencyInjection;
+using TickerQ.EntityFrameworkCore.Customizer;
+using TickerQ.EntityFrameworkCore.DependencyInjection;
 using WeatherMonitor.Api.Behaviors;
 using WeatherMonitor.Api.Diagnostics;
-using WeatherMonitor.Api.Infrastructure.Clients;
+using WeatherMonitor.Api.Features.MonitorProcessing;
 using WeatherMonitor.Api.Infrastructure.Clients.Handlers;
 using WeatherMonitor.Api.Infrastructure.Clients.Interfaces;
 using WeatherMonitor.Api.Infrastructure.Keycloak;
@@ -150,6 +154,13 @@ internal static class ServiceCollectionExtensions
             return services;
         }
 
+        internal IServiceCollection AddWebhookDispatcherHttpClient()
+        {
+            services.AddHttpClient(nameof(WebhookMonitorDispatcher), configureClient: client => client.Timeout = TimeSpan.FromMinutes(1));
+
+            return services;
+        }
+
         internal IServiceCollection AddTimeProvider()
         {
             return services.AddSingleton(TimeProvider.System);
@@ -157,23 +168,49 @@ internal static class ServiceCollectionExtensions
 
         internal IServiceCollection AddAppDbContext()
         {
+            services.AddSingleton<IInterceptor, AuditableEntitySaveChangesInterceptor>();
+
             services.AddDbContext<AppDbContext>((provider, options) =>
             {
                 var configuration = provider.GetRequiredService<IConfiguration>();
 
                 var connectionString = configuration.GetConnectionString("WeatherMonitorDB");
 
-                options.UseNpgsql(connectionString, builder => builder.EnableRetryOnFailure(3));
+                var retries = configuration.GetValue("WeatherMonitorDB:Retries", 3);
 
-                var interceptors = InterceptorAssemblyScanner.Scan(provider, Assembly.GetCallingAssembly());
+                options.UseNpgsql(connectionString, builder => builder.EnableRetryOnFailure(retries));
 
-                if (interceptors is { Length: 0 })
+                var interceptors = provider.GetServices<IInterceptor>();
+
+                if (interceptors.TryGetNonEnumeratedCount(out var count) && count > 0)
                 {
-                    return;
+                    options.AddInterceptors(interceptors);
                 }
-
-                options.AddInterceptors(interceptors);
             });
+
+            return services;
+        }
+
+        internal IServiceCollection AddScheduledJobs(IConfiguration configuration)
+        {
+            IConfigurationSection section = configuration.GetSection(WeatherMonitorProcessorOptions.SectionName);
+
+            services.AddOptions<WeatherMonitorProcessorOptions>()
+                .Bind(section);
+
+            var jobOptions = section.Get<WeatherMonitorProcessorOptions>() ?? WeatherMonitorProcessorOptions.Default();
+
+            services.AddTickerQ(options =>
+            {
+                options.AddDashboard();
+                options.AddOperationalStore(ef => ef.UseApplicationDbContext<AppDbContext>(ConfigurationType.IgnoreModelCustomizer));
+            });
+
+            services.MapTicker<WeatherMonitorProcessor>()
+                .WithCron(jobOptions.ProcessorCronExpression)
+                .WithMaxConcurrency(jobOptions.MaxConcurrency);
+
+            services.MapTicker<WebhookMonitorDispatcher, WebhookDeliveryEnvelope>();
 
             return services;
         }

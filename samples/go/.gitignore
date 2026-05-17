@@ -1,0 +1,21 @@
+# Go build outputs
+bin/
+dist/
+tmp/
+webhook-sample
+*.out
+*.test
+
+# Coverage
+coverage/
+coverage.out
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
