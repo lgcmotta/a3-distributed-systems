@@ -64,8 +64,8 @@ internal sealed class WeatherMonitorEntityTypeConfiguration : IEntityTypeConfigu
             .IsRequired()
             .HasDefaultValue(true);
 
-        builder.Property(monitor => monitor.CreatedAt)
-            .HasColumnName("created_at")
+        builder.Property<DateTimeOffset>("created_at")
+            .HasDefaultValueSql("now()")
             .IsRequired();
 
         builder.Property<DateTimeOffset?>("updated_at")
