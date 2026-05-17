@@ -17,7 +17,7 @@ public abstract record Enumeration
         Value = value;
     }
 
-    public static IEnumerable<TEnumeration> Enumerate<TEnumeration>()
+    public static IEnumerable<TEnumeration> Enumerate<TEnumeration>() where TEnumeration : Enumeration
     {
         var type = typeof(TEnumeration);
 
