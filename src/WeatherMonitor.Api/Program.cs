@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using WeatherMonitor.Api.Extensions;
 using WeatherMonitor.Api.Features.CreateMonitor;
+using WeatherMonitor.Api.Features.GetMonitors;
 using WeatherMonitor.Api.Features.GetWeatherConditionByCode;
 using WeatherMonitor.Api.Features.GetWeatherConditions;
 using WeatherMonitor.ServiceDefaults.Extensions;
@@ -49,6 +50,7 @@ var api = app.MapApiGroup();
 
 api.MapGetWeatherConditionCodes(v1);
 api.MapPostCreateMonitor(v1);
+api.MapGetMonitors(v1);
 api.MapGetWeatherConditionByCodeEndpoint(v1);
 
 app.UseScheduledJobs();
