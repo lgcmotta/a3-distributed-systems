@@ -21,6 +21,7 @@ internal sealed class GetMonitorsQueryHandler(AppDbContext context) : IRequestHa
 
         var response = await query
             .OrderByDescending(monitor => EF.Property<DateTimeOffset>(monitor, "created_at"))
+            .ThenByDescending(monitor => monitor.Id)
             .Skip((request.Page - 1) * request.Size)
             .Take(request.Size)
             .Select(monitor => new MonitorResponse
