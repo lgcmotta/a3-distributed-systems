@@ -1,7 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using WeatherMonitor.Api.Shared;
 using WeatherMonitor.Api.Infrastructure.Persistence;
+using WeatherMonitor.Api.Shared;
 
 namespace WeatherMonitor.Api.Features.GetMonitors;
 
@@ -20,7 +20,7 @@ internal sealed class GetMonitorsQueryHandler(AppDbContext context) : IRequestHa
         var totalPages = (int)Math.Ceiling(total / (double)request.Size);
 
         var response = await query
-            .OrderByDescending(monitor => monitor.CreatedAt)
+            .OrderByDescending(monitor => EF.Property<DateTimeOffset>(monitor, "created_at"))
             .Skip((request.Page - 1) * request.Size)
             .Take(request.Size)
             .Select(monitor => new MonitorResponse

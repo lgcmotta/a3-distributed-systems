@@ -20,6 +20,7 @@ internal static class GetMonitorsEndpoint
                 .RequireAuthorization()
                 .Produces<PagedApiResponse<MonitorResponse[]>>(contentType: MediaTypeNames.Application.Json)
                 .Produces<ProblemDetails>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
+                .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, MediaTypeNames.Application.ProblemJson)
                 .Produces<ProblemDetails>(StatusCodes.Status500InternalServerError, MediaTypeNames.Application.ProblemJson);
 
             return builder;
@@ -42,8 +43,8 @@ internal static class GetMonitorsEndpoint
             ClientId = claimsPrincipal.Identity.Name
         };
 
-        var (response, pagination) = await mediator.Send(request, cancellationToken);
+        (IEnumerable<MonitorResponse> response, PagedResponse pagination) = await mediator.Send(request, cancellationToken);
 
-        return Results.Ok(new PagedApiResponse<MonitorResponse[]>(response.ToArray(), pagination));
+        return Results.Ok(new PagedApiResponse<IEnumerable<MonitorResponse>>(response, pagination));
     }
 }
