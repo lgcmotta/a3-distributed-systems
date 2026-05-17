@@ -48,8 +48,6 @@ public sealed class WeatherMonitorConfiguration : IAggregateRoot
 
     public bool Enabled { get; private set; }
 
-    public DateTimeOffset CreatedAt { get; private set; }
-
     public void ReconfigureWebhookTarget(string url, string? accessToken)
     {
         Webhook.Reconfigure(url, accessToken);
