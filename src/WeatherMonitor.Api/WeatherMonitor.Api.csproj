@@ -1,9 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>2c983ce7-ac23-4f53-994a-37e52f55cdf7</UserSecretsId>
   </PropertyGroup>
 
@@ -36,9 +33,4 @@
     <ProjectReference Include="..\WeatherMonitor.Domain\WeatherMonitor.Domain.csproj" />
     <ProjectReference Include="..\WeatherMonitor.ServiceDefaults\WeatherMonitor.ServiceDefaults.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Infrastructure\Envelopes\" />
-  </ItemGroup>
-
 </Project>
