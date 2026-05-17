@@ -33,6 +33,7 @@ public sealed class WeatherMonitorConfiguration : IAggregateRoot
         WeatherCondition = weatherCondition;
         Webhook = new WebhookSettings(webhookUrl, time, timeZoneId, accessToken);
         Enabled = true;
+        CreatedAt = DateTimeOffset.UtcNow;
     }
 
     public Guid Id { get; private set; }
@@ -46,6 +47,8 @@ public sealed class WeatherMonitorConfiguration : IAggregateRoot
     public WebhookSettings Webhook { get; private set; } = null!;
 
     public bool Enabled { get; private set; }
+
+    public DateTimeOffset CreatedAt { get; private set; }
 
     public void ReconfigureWebhookTarget(string url, string? accessToken)
     {
