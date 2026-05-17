@@ -25,7 +25,7 @@ internal static class GetWeatherConditionByCodeEndpoint
             return builder;
         }
     }
-    
+
     private static async Task<IResult> GetWeatherConditionByCodeAsync(
         [AsParameters] GetWeatherConditionByCodeRequest query,
         [FromServices] IMediator mediator,

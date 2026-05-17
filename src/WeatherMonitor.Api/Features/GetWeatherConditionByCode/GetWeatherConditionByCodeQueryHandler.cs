@@ -25,7 +25,7 @@ internal sealed partial class GetWeatherConditionByCodeQueryHandler(ILogger<GetW
         throw new WeatherConditionCodeNotFoundException(request.Code);
 
     }
-    
+
     [LoggerMessage(Level = LogLevel.Error,
         Message = "Weather condition not found for code: {code}")]
     private partial void LogErrorWeatherConditionCodeNotFound(string code);

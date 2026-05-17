@@ -112,7 +112,7 @@ internal static class ProblemDetailsExtensions
             };
         }
     }
-    
+
     extension(WeatherConditionCodeNotFoundException exception)
     {
         internal ProblemDetails ToProblemDetails(string path)
