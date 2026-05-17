@@ -28,6 +28,7 @@ public sealed class WeatherMonitorConfiguration : IAggregateRoot
             throw new ArgumentException("Unknown weather condition code", nameof(weatherConditionCode));
         }
 
+        Id = Guid.CreateVersion7();
         ClientId = clientId.Trim();
         Location = MonitorLocation.Create(cityCode, cityName, state);
         WeatherCondition = weatherCondition;
@@ -84,5 +85,30 @@ public sealed class WeatherMonitorConfiguration : IAggregateRoot
         return WeatherCondition.TryFromCode(condition, out var weatherCondition)
                && weatherCondition is not null
                && WeatherCondition.Code == weatherCondition.Code;
+    }
+
+    public DateTime CalculateDeliverySchedule(DateTimeOffset utcNow)
+    {
+        var timeZone = TimeZoneInfo.FindSystemTimeZoneById(Webhook.TimeZoneId);
+
+        var local = TimeZoneInfo.ConvertTime(utcNow, timeZone);
+
+        var scheduled = DateOnly.FromDateTime(local.DateTime).ToDateTime(Webhook.ScheduleFor, DateTimeKind.Unspecified);
+
+        if (scheduled <= local.DateTime)
+        {
+            scheduled = scheduled.AddDays(1);
+        }
+
+        return TimeZoneInfo.ConvertTimeToUtc(scheduled, timeZone);
+    }
+
+    public DateOnly CalculateForecastDate(DateTimeOffset utcNow)
+    {
+        var timeZone = TimeZoneInfo.FindSystemTimeZoneById(Webhook.TimeZoneId);
+
+        var local = TimeZoneInfo.ConvertTime(utcNow, timeZone);
+
+        return DateOnly.FromDateTime(local.DateTime).AddDays(1);
     }
 }

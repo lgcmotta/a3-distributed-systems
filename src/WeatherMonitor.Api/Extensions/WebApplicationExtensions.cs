@@ -1,5 +1,6 @@
 using Keycloak.AuthServices.Common;
 using Scalar.AspNetCore;
+using TickerQ.DependencyInjection;
 using WeatherMonitor.Api.Infrastructure.Keycloak;
 using WeatherMonitor.Api.Middlewares;
 
@@ -19,6 +20,13 @@ internal static class WebApplicationExtensions
         internal WebApplication UsePermissiveCors()
         {
             app.UseCors("Permissive");
+
+            return app;
+        }
+
+        internal WebApplication UseScheduledJobs()
+        {
+            app.UseTickerQ();
 
             return app;
         }

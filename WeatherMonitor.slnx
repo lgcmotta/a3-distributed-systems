@@ -1,4 +1,28 @@
 <Solution>
+  <Folder Name="/samples/" />
+  <Folder Name="/samples/go/">
+    <File Path="samples/go/.dockerignore" />
+    <File Path="samples/go/.gitignore" />
+    <File Path="samples/go/go.mod" />
+    <File Path="samples/go/go.sum" />
+    <File Path="samples/go/Dockerfile" />
+    <File Path="samples/go/main.go" />
+  </Folder>
+  <Folder Name="/samples/nodejs/">
+    <File Path="samples/nodejs/.dockerignore" />
+    <File Path="samples/nodejs/.gitignore" />
+    <File Path="samples/nodejs/Dockerfile" />
+    <File Path="samples/nodejs/index.js" />
+    <File Path="samples/nodejs/package-lock.json" />
+    <File Path="samples/nodejs/package.json" />
+  </Folder>
+  <Folder Name="/samples/python/">
+    <File Path="samples/python/.dockerignore" />
+    <File Path="samples/python/.gitignore" />
+    <File Path="samples/python/Dockerfile" />
+    <File Path="samples/python/main.py" />
+    <File Path="samples/python/requirements.txt" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path=".gitattributes" />
@@ -14,6 +38,7 @@
     <File Path="nuget.config" />
     <File Path="README.md" />
   </Folder>
+  <Folder Name="/Solution Items/.github/" />
   <Folder Name="/Solution Items/.github/workflows/">
     <File Path=".github/workflows/lint.yml" />
   </Folder>

@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.ValueGeneration;
 using WeatherMonitor.Api.Infrastructure.Persistence.Extensions;
 using WeatherMonitor.Domain.Core;
 using WeatherMonitor.Domain.Deliveries;
@@ -15,8 +14,6 @@ public class WebhookDeliveryEntityTypeConfiguration : IEntityTypeConfiguration<W
         builder.ToTableSnakeCaseLower();
 
         builder.SnakeCaseLowerProperty(delivery => delivery.Id)
-            .ValueGeneratedOnAdd()
-            .HasValueGenerator<GuidValueGenerator>()
             .IsRequired();
 
         builder.SnakeCaseLowerProperty(delivery => delivery.ScheduledFor)
