@@ -90,22 +90,31 @@ internal sealed partial class WeatherMonitorProcessor(
                             RetryIntervals = [60, 60]
                         };
 
+                        Guid? jobId = null;
+
                         try
                         {
-                            var result = await manager.AddAsync(tickerEntity, cancellationToken);
+                            var ticker = await manager.AddAsync(tickerEntity, cancellationToken);
 
-                            if (result is not { IsSucceeded: true })
+                            if (ticker is not { IsSucceeded: true })
                             {
-                                LogFailedToScheduleWebhookDelivery(monitor.Id, result.Exception);
+                                LogFailedToScheduleWebhookDelivery(monitor.Id, ticker.Exception);
 
-                                throw result.Exception ?? new InvalidOperationException("Failed to schedule webhook delivery job.");
+                                throw ticker.Exception ?? new InvalidOperationException("Failed to schedule webhook delivery job.");
                             }
 
-                            delivery.AssignJob(result.Result.Id.ToString());
+                            jobId = ticker.Result.Id;
+
+                            delivery.AssignJob(jobId.Value.ToString());
                         }
                         catch
                         {
                             delivery.MarkFailed();
+
+                            if (jobId is not null)
+                            {
+                                await manager.DeleteAsync(jobId.Value, cancellationToken);
+                            }
 
                             throw;
                         }
