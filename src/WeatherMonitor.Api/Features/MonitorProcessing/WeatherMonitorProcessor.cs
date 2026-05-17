@@ -9,6 +9,7 @@ using WeatherMonitor.Api.Infrastructure.Clients.Interfaces;
 using WeatherMonitor.Api.Infrastructure.Persistence;
 using WeatherMonitor.Domain.Deliveries;
 using WeatherMonitor.Domain.Deliveries.ValueObjects;
+using WeatherMonitor.Domain.Monitors;
 
 namespace WeatherMonitor.Api.Features.MonitorProcessing;
 
@@ -23,14 +24,10 @@ internal sealed partial class WeatherMonitorProcessor(
 {
     public async Task ExecuteAsync(TickerFunctionContext context, CancellationToken cancellationToken = default)
     {
-        await foreach (var monitorGrouping in db.Monitors
-                           .Where(monitor => monitor.Enabled == true)
-                           .GroupBy(monitor => monitor.Location.CityCode)
-                           .AsAsyncEnumerable()
-                           .WithCancellation(cancellationToken))
-        {
-            var cityCode = monitorGrouping.Key;
+        var cityCodes = await db.SelectDistinctCityCodesAsync(cancellationToken);
 
+        foreach (var cityCode in cityCodes)
+        {
             try
             {
                 var response = await api.GetForecastAsync(cityCode, days: 1, cancellationToken);
@@ -43,7 +40,7 @@ internal sealed partial class WeatherMonitorProcessor(
 
                 var now = time.GetUtcNow();
 
-                foreach (var monitor in monitorGrouping)
+                await foreach (var monitor in db.StreamMonitorsAsync(cityCode).WithCancellation(cancellationToken))
                 {
                     try
                     {
@@ -63,10 +60,7 @@ internal sealed partial class WeatherMonitorProcessor(
                             continue;
                         }
 
-                        if (await db.Deliveries.AnyAsync(delivery => delivery.Payload.MonitorId == monitor.Id &&
-                                                                     delivery.Payload.ForecastDate == forecastDate &&
-                                                                     (delivery.Status == WebhookDeliveryStatus.Pending ||
-                                                                      delivery.Status == WebhookDeliveryStatus.Delivered), cancellationToken))
+                        if (await db.HasDeliveryForForecastDateAsync(monitor.Id, forecastDate, cancellationToken))
                         {
                             continue;
                         }
@@ -144,4 +138,28 @@ internal sealed partial class WeatherMonitorProcessor(
 
     [LoggerMessage(LogLevel.Error, "Failed to schedule webhook delivery for monitor {MonitorId}.")]
     partial void LogFailedToScheduleWebhookDelivery(Guid monitorId, Exception exception);
+}
+
+file static class WeatherMonitorProcessorExtensions
+{
+    extension(AppDbContext context)
+    {
+        internal Task<List<int>> SelectDistinctCityCodesAsync(CancellationToken cancellationToken = default)
+        {
+            return context.Monitors.Where(monitor => monitor.Enabled).Select(monitor => monitor.Location.CityCode).Distinct().ToListAsync(cancellationToken);
+        }
+
+        internal IAsyncEnumerable<WeatherMonitorConfiguration> StreamMonitorsAsync(int cityCode)
+        {
+            return context.Monitors.Where(monitor => monitor.Enabled && monitor.Location.CityCode == cityCode).AsAsyncEnumerable();
+        }
+
+        internal Task<bool> HasDeliveryForForecastDateAsync(Guid monitorId, DateOnly forecastDate, CancellationToken cancellationToken = default)
+        {
+            return context.Deliveries.AnyAsync(delivery => delivery.Payload.MonitorId == monitorId &&
+                                                           delivery.Payload.ForecastDate == forecastDate &&
+                                                           (delivery.Status == WebhookDeliveryStatus.Pending ||
+                                                            delivery.Status == WebhookDeliveryStatus.Delivered), cancellationToken);
+        }
+    }
 }
