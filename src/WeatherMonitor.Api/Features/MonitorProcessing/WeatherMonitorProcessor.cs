@@ -30,7 +30,7 @@ internal sealed partial class WeatherMonitorProcessor(
         {
             try
             {
-                var response = await api.GetForecastAsync(cityCode, days: 1, cancellationToken);
+                var response = await api.GetForecastAsync(cityCode, days: 2, cancellationToken);
 
                 if (response is not { IsSuccessful: true, Content: not null })
                 {
