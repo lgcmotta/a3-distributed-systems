@@ -10,7 +10,6 @@ internal sealed class GetMonitorByIdCommandHandler(AppDbContext context) : IRequ
     public async Task<MonitorResponse> Handle(GetMonitorByIdRequest request, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        
         var monitor = await context.Monitors.AsNoTracking().Where(monitor =>
             monitor.Id == request.MonitorId && monitor.ClientId == request.ClientId)
             .SingleOrDefaultAsync(cancellationToken);

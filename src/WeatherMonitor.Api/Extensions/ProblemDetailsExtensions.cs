@@ -127,7 +127,6 @@ internal static class ProblemDetailsExtensions
             };
         }
     }
-    
     extension(MonitorNotFoundException exception)
     {
         internal ProblemDetails ToProblemDetails(string path)

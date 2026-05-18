@@ -14,7 +14,7 @@ internal static class GetMonitorByIdEndpoint
         internal IEndpointRouteBuilder MapGetMonitorById(ApiVersion version)
         {
             builder.MapGet("monitors/{monitorId}", GetMonitorByIdAsync)
-                .WithName($"post-v{version:V}-monitors-monitor-id")
+                .WithName($"get-v{version:V}-monitors-monitor-id")
                 .WithDisplayName("Get Monitor By Id")
                 .WithTags("monitors")
                 .RequireAuthorization()
@@ -39,7 +39,6 @@ internal static class GetMonitorByIdEndpoint
 
         GetMonitorByIdRequest command = query with { ClientId = principal.Identity.Name };
         var result = await mediator.Send(command, cancellationToken);
-        
         return Results.Ok(new ApiResponse<MonitorResponse>(result));
     }
 }
