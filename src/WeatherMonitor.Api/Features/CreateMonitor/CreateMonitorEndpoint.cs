@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Security.Claims;
-using WeatherMonitor.Api.Extensions;
 using WeatherMonitor.Api.Shared;
 
 namespace WeatherMonitor.Api.Features.CreateMonitor;

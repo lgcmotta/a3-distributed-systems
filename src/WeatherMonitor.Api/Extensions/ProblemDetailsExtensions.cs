@@ -127,4 +127,19 @@ internal static class ProblemDetailsExtensions
             };
         }
     }
+    
+    extension(MonitorNotFoundException exception)
+    {
+        internal ProblemDetails ToProblemDetails(string path)
+        {
+            return new ProblemDetails
+            {
+                Title = "Monitor Not Found",
+                Detail = exception.Message,
+                Status = StatusCodes.Status404NotFound,
+                Instance = path,
+                Extensions = new Dictionary<string, object?> { ["trace_id"] = Activity.Current?.TraceId.ToString(), ["exception_type"] = exception.GetType().FullName }
+            };
+        }
+    }
 }

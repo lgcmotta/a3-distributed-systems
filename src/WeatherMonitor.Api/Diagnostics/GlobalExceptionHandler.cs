@@ -25,6 +25,7 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
             ArgumentOutOfRangeException e => e.ToProblemDetails(instance),
             ArgumentException e => e.ToProblemDetails(instance),
             WeatherConditionCodeNotFoundException e => e.ToProblemDetails(instance),
+            MonitorNotFoundException e => e.ToProblemDetails(instance),
             _ => exception.ToProblemDetails(instance)
         };
 
