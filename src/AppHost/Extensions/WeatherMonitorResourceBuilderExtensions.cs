@@ -46,6 +46,7 @@ internal static class WeatherMonitorResourceBuilderExtensions
                     context.EnvironmentVariables["Keycloak__ConfidentialPort"] = "0";
                     context.EnvironmentVariables["Keycloak__VerifyTokenAudience"] = "false";
                     context.EnvironmentVariables["Keycloak__RequireHttpsMetadata"] = "false";
+                    context.EnvironmentVariables["KEYCLOAK_MANAGEMENT"] = keycloak.GetEndpoint("management").Url.TrimEnd('/');
                 });
 
             return weather;

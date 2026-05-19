@@ -38,7 +38,7 @@ internal static class CreateMonitorEndpoint
         ClaimsPrincipal principal,
         CancellationToken cancellationToken = default)
     {
-        if (principal.Identity is null || string.IsNullOrWhiteSpace(principal.Identity.Name))
+        if (principal is { Identity: null } || string.IsNullOrWhiteSpace(principal.Identity.Name))
         {
             return Results.Unauthorized();
         }

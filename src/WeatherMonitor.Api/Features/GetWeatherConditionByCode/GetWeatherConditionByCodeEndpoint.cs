@@ -29,7 +29,7 @@ internal static class GetWeatherConditionByCodeEndpoint
 
     private static async Task<IResult> GetWeatherConditionByCodeAsync(
         [AsParameters] WeatherConditionRequest query,
-        [FromServices] IMediator mediator,
+        IMediator mediator,
         CancellationToken cancellationToken = default)
     {
         WeatherConditionResponse response = await mediator.Send(query, cancellationToken);
