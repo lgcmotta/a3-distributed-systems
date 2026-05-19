@@ -29,7 +29,7 @@ internal static class GetMonitorsEndpoint
 
     private static async Task<IResult> GetMonitorsAsync(
         [AsParameters] GetMonitorsRequest request,
-        [FromServices] IMediator mediator,
+        IMediator mediator,
         ClaimsPrincipal principal,
         CancellationToken cancellationToken = default)
     {
