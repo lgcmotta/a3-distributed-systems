@@ -5,6 +5,7 @@ using WeatherMonitor.Api.Features.GetMonitorById;
 using WeatherMonitor.Api.Features.GetMonitors;
 using WeatherMonitor.Api.Features.GetWeatherConditionByCode;
 using WeatherMonitor.Api.Features.GetWeatherConditions;
+using WeatherMonitor.Api.Features.UpdateMonitor;
 using WeatherMonitor.ServiceDefaults.Extensions;
 
 var v1 = new ApiVersion(majorVersion: 1, minorVersion: 0);
@@ -50,9 +51,10 @@ if (app.Environment.IsDevelopment())
 var api = app.MapApiGroup();
 
 api.MapGetWeatherConditionCodes(v1);
-api.MapPostCreateMonitor(v1);
+api.MapGetWeatherConditionByCode(v1);
 api.MapGetMonitors(v1);
-api.MapGetWeatherConditionByCodeEndpoint(v1);
+api.MapPostCreateMonitor(v1);
+api.MapPatchUpdateMonitor(v1);
 api.MapGetMonitorById(v1);
 
 app.UseScheduledJobs();

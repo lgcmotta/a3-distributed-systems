@@ -1,21 +1,21 @@
 using MediatR;
-using WeatherMonitor.Api.Shared;
+using WeatherMonitor.Api.Contracts;
 using WeatherMonitor.Domain.Core;
 using WeatherMonitor.Domain.Monitors.ValueObjects;
 
 namespace WeatherMonitor.Api.Features.GetWeatherConditions;
 
-internal sealed class GetWeatherConditionsQueryHandler : IRequestHandler<GetWeatherConditionsRequest, (IEnumerable<WeatherConditionResponse>, PagedResponse)>
+internal sealed class GetWeatherConditionsQueryHandler : IRequestHandler<WeatherConditionRequest, (WeatherConditionResponse[], PagedResponse)>
 {
-    public Task<(IEnumerable<WeatherConditionResponse>, PagedResponse)> Handle(GetWeatherConditionsRequest request, CancellationToken cancellationToken)
+    public Task<(WeatherConditionResponse[], PagedResponse)> Handle(WeatherConditionRequest request, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         var weatherConditionCodes = Enumeration.Enumerate<WeatherCondition>()
             .OrderBy(weatherCondition => weatherCondition.Code, StringComparer.Ordinal)
-            .ToList();
+            .ToArray();
 
-        var total = weatherConditionCodes.Count;
+        var total = weatherConditionCodes.Length;
 
         var totalPages = (int)Math.Ceiling(total / (double)request.Size);
 
@@ -23,7 +23,7 @@ internal sealed class GetWeatherConditionsQueryHandler : IRequestHandler<GetWeat
             .Skip((request.Page - 1) * request.Size)
             .Take(request.Size)
             .Select(condition => new WeatherConditionResponse(condition.Code, condition.Description))
-            .ToList();
+            .ToArray();
 
         var pagination = new PagedResponse
         {
@@ -35,6 +35,6 @@ internal sealed class GetWeatherConditionsQueryHandler : IRequestHandler<GetWeat
             TotalPages = totalPages
         };
 
-        return Task.FromResult<(IEnumerable<WeatherConditionResponse>, PagedResponse)>((response, pagination));
+        return Task.FromResult<(WeatherConditionResponse[], PagedResponse)>((response, pagination));
     }
 }

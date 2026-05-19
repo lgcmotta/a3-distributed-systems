@@ -1,5 +1,6 @@
 using MediatR;
 using System.Text.Json.Serialization;
+using WeatherMonitor.Api.Contracts;
 
 namespace WeatherMonitor.Api.Features.CreateMonitor;
 

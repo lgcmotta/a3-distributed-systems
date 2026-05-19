@@ -1,4 +1,4 @@
-namespace WeatherMonitor.Api.Shared;
+namespace WeatherMonitor.Api.Contracts;
 
 public record ApiResponse<TResponse>(TResponse Data);
 
