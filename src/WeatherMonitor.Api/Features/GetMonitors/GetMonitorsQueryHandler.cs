@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using WeatherMonitor.Api.Contracts;
+using WeatherMonitor.Api.Infrastructure.Extensions;
 using WeatherMonitor.Api.Infrastructure.Persistence;
 
 namespace WeatherMonitor.Api.Features.GetMonitors;
@@ -35,8 +36,8 @@ internal sealed class GetMonitorsQueryHandler(AppDbContext context) : IRequestHa
                 WebhookUrl = monitor.Webhook.Url,
                 Time = monitor.Webhook.ScheduleFor,
                 TimeZoneId = monitor.Webhook.TimeZoneId,
-                CreatedAt = EF.Property<DateTimeOffset>(monitor, "created_at"),
-                UpdatedAt = EF.Property<DateTimeOffset?>(monitor, "updated_at"),
+                CreatedAt = EF.Property<DateTimeOffset>(monitor, "created_at").ToLocalTimeZone(monitor.Webhook.TimeZoneId),
+                UpdatedAt = EF.Property<DateTimeOffset?>(monitor, "updated_at").ToLocalTimeZone(monitor.Webhook.TimeZoneId),
                 Enabled = monitor.Enabled
             })
             .ToArrayAsync(cancellationToken);

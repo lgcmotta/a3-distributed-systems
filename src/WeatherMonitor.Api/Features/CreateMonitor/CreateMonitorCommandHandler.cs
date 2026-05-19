@@ -5,6 +5,7 @@ using WeatherMonitor.Api.Contracts;
 using WeatherMonitor.Api.Infrastructure.Clients.Exceptions;
 using WeatherMonitor.Api.Infrastructure.Clients.Interfaces;
 using WeatherMonitor.Api.Infrastructure.Clients.Responses;
+using WeatherMonitor.Api.Infrastructure.Extensions;
 using WeatherMonitor.Api.Infrastructure.Persistence;
 using WeatherMonitor.Api.Infrastructure.Persistence.Extensions;
 using WeatherMonitor.Domain.Monitors;
@@ -81,8 +82,8 @@ internal sealed partial class CreateMonitorCommandHandler(
             WebhookUrl = monitor.Webhook.Url,
             Time = monitor.Webhook.ScheduleFor,
             TimeZoneId = monitor.Webhook.TimeZoneId,
-            CreatedAt = db.ReadCreatedAtShadowProperty(monitor),
-            UpdatedAt = db.ReadUpdatedAtShadowProperty(monitor),
+            CreatedAt = db.ReadCreatedAtShadowProperty(monitor).ToLocalTimeZone(monitor.Webhook.TimeZoneId),
+            UpdatedAt = db.ReadUpdatedAtShadowProperty(monitor).ToLocalTimeZone(monitor.Webhook.TimeZoneId),
             Enabled = monitor.Enabled
         };
     }
