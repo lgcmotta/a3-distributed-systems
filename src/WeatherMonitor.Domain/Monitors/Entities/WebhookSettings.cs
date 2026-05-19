@@ -17,12 +17,14 @@ public sealed class WebhookSettings
             throw new ArgumentException($"'{timeZoneId}' is not a valid time zone ID. Use an IANA time zone ID.", nameof(timeZoneId));
         }
 
-        if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
+            (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps) ||
+            !uri.IsWellFormedOriginalString())
         {
-            throw new ArgumentException("Webhook URL must be an absolute URI.", nameof(url));
+            throw new ArgumentException("Webhook URL must be a valid absolute HTTPS/HTTP URI.", nameof(url));
         }
 
-        Url = url.Trim();
+        Url = uri.ToString();
         AccessToken = accessToken;
         ScheduleFor = scheduleFor;
         TimeZoneId = timeZoneId;
@@ -36,35 +38,77 @@ public sealed class WebhookSettings
 
     public string TimeZoneId { get; private set; } = string.Empty;
 
-    internal void Reconfigure(string url, string? accessToken = null)
+    internal void ReconfigureTargetUrl(string? url)
     {
-        if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
-        {
-            throw new ArgumentException("Webhook URL must be an absolute URI.", nameof(url));
-        }
-
-        Url = url;
-
-        if (accessToken is not null)
-        {
-            AccessToken = accessToken;
-        }
-    }
-
-    internal void Reschedule(TimeOnly time, string? timeZoneId = null)
-    {
-        if (ScheduleFor == time)
+        if (url is null)
         {
             return;
         }
 
-        ScheduleFor = time;
-
-        if (timeZoneId is not null &&
-            TimeZoneId != timeZoneId &&
-            TimeZoneInfo.TryFindSystemTimeZoneById(timeZoneId, out _))
+        if (string.IsNullOrWhiteSpace(url))
         {
-            TimeZoneId = timeZoneId;
+            throw new ArgumentException("Webhook URL must not be empty or whitespace.", nameof(url));
         }
+
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
+            (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps) ||
+            !uri.IsWellFormedOriginalString())
+        {
+            throw new ArgumentException("Webhook URL must be a valid absolute HTTPS/HTTP URI.", nameof(url));
+        }
+
+        Url = uri.ToString();
+    }
+
+    internal void ReconfigureAccessToken(string? accessToken = null)
+    {
+        if (accessToken is null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(accessToken))
+        {
+            AccessToken = null;
+
+            return;
+        }
+
+        AccessToken = accessToken;
+    }
+
+    internal void Reschedule(TimeOnly? time)
+    {
+        if (time is null || ScheduleFor == time)
+        {
+            return;
+        }
+
+        ScheduleFor = time.Value;
+    }
+
+    public void SwitchTimeZone(string? timeZoneId)
+    {
+        if (timeZoneId is null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(timeZoneId))
+        {
+            throw new ArgumentException("Time zone ID cannot be empty or whitespace.");
+        }
+
+        if (TimeZoneId == timeZoneId)
+        {
+            return;
+        }
+
+        if (!TimeZoneInfo.TryFindSystemTimeZoneById(timeZoneId, out _))
+        {
+            throw new ArgumentException($"Unknown time zone ID {timeZoneId}.", nameof(timeZoneId));
+        }
+
+        TimeZoneId = timeZoneId;
     }
 }

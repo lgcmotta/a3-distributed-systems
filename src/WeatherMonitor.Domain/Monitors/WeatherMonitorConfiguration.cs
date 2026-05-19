@@ -48,14 +48,30 @@ public sealed class WeatherMonitorConfiguration : IAggregateRoot
 
     public bool Enabled { get; private set; }
 
-    public void ReconfigureWebhookTarget(string url, string? accessToken)
+    public void ReconfigureWebhookTargetUrl(string? url)
     {
-        Webhook.Reconfigure(url, accessToken);
+        Webhook.ReconfigureTargetUrl(url);
     }
 
-    public void Reschedule(TimeOnly time)
+    public void ReconfigureWebhookAccessToken(string? accessToken)
+    {
+        Webhook.ReconfigureAccessToken(accessToken);
+    }
+
+    public void Reschedule(TimeOnly? time)
     {
         Webhook.Reschedule(time);
+    }
+
+    public void SwitchTimeZone(string? timeZoneId)
+    {
+        Webhook.SwitchTimeZone(timeZoneId);
+    }
+
+    public bool HasScheduleIdentityChange(TimeOnly targetTime, string targetTimeZoneId)
+    {
+        return targetTime != Webhook.ScheduleFor ||
+               !string.Equals(targetTimeZoneId, Webhook.TimeZoneId, StringComparison.Ordinal);
     }
 
     public void Enable()
