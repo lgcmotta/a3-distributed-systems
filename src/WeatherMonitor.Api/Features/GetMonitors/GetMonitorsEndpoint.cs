@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Security.Claims;
-using WeatherMonitor.Api.Shared;
+using WeatherMonitor.Api.Contracts;
 
 namespace WeatherMonitor.Api.Features.GetMonitors;
 
@@ -20,7 +20,7 @@ internal static class GetMonitorsEndpoint
                 .RequireAuthorization()
                 .Produces<PagedApiResponse<MonitorResponse[]>>(contentType: MediaTypeNames.Application.Json)
                 .Produces<ProblemDetails>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
-                .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, MediaTypeNames.Application.ProblemJson)
+                .Produces(statusCode: StatusCodes.Status401Unauthorized)
                 .Produces<ProblemDetails>(StatusCodes.Status500InternalServerError, MediaTypeNames.Application.ProblemJson);
 
             return builder;
@@ -43,8 +43,8 @@ internal static class GetMonitorsEndpoint
             ClientId = claimsPrincipal.Identity.Name
         };
 
-        (IEnumerable<MonitorResponse> response, PagedResponse pagination) = await mediator.Send(request, cancellationToken);
+        (MonitorResponse[] response, PagedResponse pagination) = await mediator.Send(request, cancellationToken);
 
-        return Results.Ok(new PagedApiResponse<IEnumerable<MonitorResponse>>(response, pagination));
+        return Results.Ok(new PagedApiResponse<MonitorResponse[]>(response, pagination));
     }
 }

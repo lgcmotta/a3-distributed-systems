@@ -1,4 +1,4 @@
-namespace WeatherMonitor.Api.Features.CreateMonitor;
+namespace WeatherMonitor.Api.Contracts;
 
 public record MonitorResponse
 {
@@ -11,5 +11,7 @@ public record MonitorResponse
     public required string WebhookUrl { get; init; }
     public required TimeOnly Time { get; init; }
     public required string TimeZoneId { get; init; }
+    public required DateTimeOffset CreatedAt { get; init; }
+    public required DateTimeOffset? UpdatedAt { get; init; }
     public required bool Enabled { get; init; }
 }

@@ -1,4 +1,4 @@
-namespace WeatherMonitor.Api.Shared;
+namespace WeatherMonitor.Api.Contracts;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public record PagedResponse

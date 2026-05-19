@@ -1,3 +1,3 @@
-namespace WeatherMonitor.Api.Features.GetWeatherConditions;
+namespace WeatherMonitor.Api.Contracts;
 
 public record WeatherConditionResponse(string Code, string Description);
