@@ -21,10 +21,8 @@ internal sealed partial class PatchMonitorCommandHandler(
     public async Task<MonitorResponse> Handle(PatchMonitorRequest request, CancellationToken cancellationToken = default)
     {
         var monitor = await db.Monitors
-            // .Include(weatherMonitorConfiguration => weatherMonitorConfiguration.WeatherCondition)
-            // .Include(weatherMonitorConfiguration => weatherMonitorConfiguration.Location)
-            // .ThenInclude(monitorLocation => monitorLocation.State)
-            .FirstOrDefaultAsync(monitor => monitor.Id == request.MonitorId && monitor.ClientId == request.ClientId, cancellationToken);
+            .FirstOrDefaultAsync(monitor => monitor.Id == request.MonitorId &&
+                                            monitor.ClientId == request.ClientId, cancellationToken);
 
         if (monitor is null)
         {
