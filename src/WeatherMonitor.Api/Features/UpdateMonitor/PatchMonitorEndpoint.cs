@@ -20,7 +20,7 @@ internal static class PatchMonitorEndpoint
                 .RequireAuthorization()
                 .Produces<ApiResponse<MonitorResponse>>(contentType: MediaTypeNames.Application.Json)
                 .Produces<ProblemDetails>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
-                .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, MediaTypeNames.Application.ProblemJson)
+                .Produces(statusCode: StatusCodes.Status401Unauthorized)
                 .Produces<ProblemDetails>(StatusCodes.Status404NotFound, MediaTypeNames.Application.ProblemJson)
                 .Produces<ProblemDetails>(StatusCodes.Status409Conflict, MediaTypeNames.Application.ProblemJson)
                 .Produces<ProblemDetails>(StatusCodes.Status500InternalServerError, MediaTypeNames.Application.ProblemJson);

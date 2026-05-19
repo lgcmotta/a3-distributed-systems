@@ -21,6 +21,7 @@ internal static class CreateMonitorEndpoint
                 .RequireAuthorization()
                 .Produces<ApiResponse<MonitorResponse>>(StatusCodes.Status201Created, contentType: MediaTypeNames.Application.Json)
                 .Produces<ProblemDetails>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
+                .Produces(statusCode: StatusCodes.Status401Unauthorized)
                 .Produces<ProblemDetails>(StatusCodes.Status404NotFound, MediaTypeNames.Application.ProblemJson)
                 .Produces<ProblemDetails>(StatusCodes.Status409Conflict, MediaTypeNames.Application.ProblemJson)
                 .Produces<ProblemDetails>(StatusCodes.Status503ServiceUnavailable, MediaTypeNames.Application.ProblemJson)

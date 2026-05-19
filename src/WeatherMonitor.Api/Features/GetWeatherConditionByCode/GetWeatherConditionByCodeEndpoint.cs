@@ -19,6 +19,7 @@ internal static class GetWeatherConditionByCodeEndpoint
                 .RequireAuthorization()
                 .Produces<ApiResponse<WeatherConditionResponse>>(contentType: MediaTypeNames.Application.Json)
                 .Produces<ProblemDetails>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
+                .Produces(statusCode: StatusCodes.Status401Unauthorized)
                 .Produces<ProblemDetails>(StatusCodes.Status404NotFound, MediaTypeNames.Application.ProblemJson)
                 .Produces<ProblemDetails>(StatusCodes.Status500InternalServerError, MediaTypeNames.Application.ProblemJson);
 
