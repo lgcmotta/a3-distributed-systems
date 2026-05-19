@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Security.Claims;
-using WeatherMonitor.Api.Shared;
+using WeatherMonitor.Api.Contracts;
 
 namespace WeatherMonitor.Api.Features.GetMonitorById;
 
@@ -13,13 +13,14 @@ internal static class GetMonitorByIdEndpoint
     {
         internal IEndpointRouteBuilder MapGetMonitorById(ApiVersion version)
         {
-            builder.MapGet("monitors/{monitorId}", GetMonitorByIdAsync)
+            builder.MapGet("monitors/{monitorId:guid}", GetMonitorByIdAsync)
                 .WithName($"get-v{version:V}-monitors-monitor-id")
                 .WithDisplayName("Get Monitor By Id")
                 .WithTags("monitors")
                 .RequireAuthorization()
                 .Produces<ApiResponse<MonitorResponse>>(contentType: MediaTypeNames.Application.Json)
                 .Produces<ProblemDetails>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
+                .Produces(statusCode: StatusCodes.Status401Unauthorized)
                 .Produces<ProblemDetails>(StatusCodes.Status404NotFound, MediaTypeNames.Application.ProblemJson)
                 .Produces<ProblemDetails>(StatusCodes.Status500InternalServerError, MediaTypeNames.Application.ProblemJson);
 
@@ -28,17 +29,20 @@ internal static class GetMonitorByIdEndpoint
     }
 
     private static async Task<IResult> GetMonitorByIdAsync(
-        [AsParameters] GetMonitorByIdRequest query,
-        [FromServices] IMediator mediator,
-        ApiVersion version,
+        Guid monitorId,
+        IMediator mediator,
         ClaimsPrincipal principal,
         CancellationToken cancellationToken = default)
     {
-        if (principal.Identity is null || string.IsNullOrWhiteSpace(principal.Identity.Name))
+        if (principal is { Identity: null } || string.IsNullOrWhiteSpace(principal.Identity.Name))
+        {
             return Results.Unauthorized();
+        }
 
-        GetMonitorByIdRequest command = query with { ClientId = principal.Identity.Name };
-        var result = await mediator.Send(command, cancellationToken);
+        var query = new GetMonitorByIdQuery(monitorId, principal.Identity.Name);
+
+        MonitorResponse result = await mediator.Send(query, cancellationToken);
+
         return Results.Ok(new ApiResponse<MonitorResponse>(result));
     }
 }

@@ -28,22 +28,22 @@ internal static class GetMonitorsEndpoint
     }
 
     private static async Task<IResult> GetMonitorsAsync(
-        [AsParameters] GetMonitorsRequest query,
+        [AsParameters] GetMonitorsRequest request,
         [FromServices] IMediator mediator,
-        ClaimsPrincipal claimsPrincipal,
+        ClaimsPrincipal principal,
         CancellationToken cancellationToken = default)
     {
-        if (claimsPrincipal.Identity is null || string.IsNullOrWhiteSpace(claimsPrincipal.Identity.Name))
+        if (principal is { Identity: null } || string.IsNullOrWhiteSpace(principal.Identity.Name))
         {
             return Results.Unauthorized();
         }
 
-        var request = query with
+        var query = request with
         {
-            ClientId = claimsPrincipal.Identity.Name
+            ClientId = principal.Identity.Name
         };
 
-        (MonitorResponse[] response, PagedResponse pagination) = await mediator.Send(request, cancellationToken);
+        (MonitorResponse[] response, PagedResponse pagination) = await mediator.Send(query, cancellationToken);
 
         return Results.Ok(new PagedApiResponse<MonitorResponse[]>(response, pagination));
     }

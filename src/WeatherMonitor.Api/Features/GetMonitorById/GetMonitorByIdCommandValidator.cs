@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace WeatherMonitor.Api.Features.GetMonitorById;
 
-internal sealed class GetMonitorByIdCommandValidator : AbstractValidator<GetMonitorByIdRequest>
+internal sealed class GetMonitorByIdCommandValidator : AbstractValidator<GetMonitorByIdQuery>
 {
     public GetMonitorByIdCommandValidator()
     {
