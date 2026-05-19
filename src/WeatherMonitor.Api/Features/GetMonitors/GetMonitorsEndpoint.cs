@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Security.Claims;
-using WeatherMonitor.Api.Shared;
+using WeatherMonitor.Api.Contracts;
 
 namespace WeatherMonitor.Api.Features.GetMonitors;
 
@@ -43,8 +43,8 @@ internal static class GetMonitorsEndpoint
             ClientId = claimsPrincipal.Identity.Name
         };
 
-        (IEnumerable<MonitorResponse> response, PagedResponse pagination) = await mediator.Send(request, cancellationToken);
+        (MonitorResponse[] response, PagedResponse pagination) = await mediator.Send(request, cancellationToken);
 
-        return Results.Ok(new PagedApiResponse<IEnumerable<MonitorResponse>>(response, pagination));
+        return Results.Ok(new PagedApiResponse<MonitorResponse[]>(response, pagination));
     }
 }

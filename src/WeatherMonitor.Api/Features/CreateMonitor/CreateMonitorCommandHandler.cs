@@ -1,10 +1,12 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Refit;
+using WeatherMonitor.Api.Contracts;
 using WeatherMonitor.Api.Infrastructure.Clients.Exceptions;
 using WeatherMonitor.Api.Infrastructure.Clients.Interfaces;
 using WeatherMonitor.Api.Infrastructure.Clients.Responses;
 using WeatherMonitor.Api.Infrastructure.Persistence;
+using WeatherMonitor.Api.Infrastructure.Persistence.Extensions;
 using WeatherMonitor.Domain.Monitors;
 using WeatherMonitor.Domain.Monitors.Exceptions;
 
@@ -15,7 +17,7 @@ namespace WeatherMonitor.Api.Features.CreateMonitor;
 internal sealed partial class CreateMonitorCommandHandler(
     ILogger<CreateMonitorCommandHandler> logger,
     IBrasilApiClient api,
-    AppDbContext context
+    AppDbContext db
 ) : IRequestHandler<CreateMonitorRequest, MonitorResponse>
 {
     public async Task<MonitorResponse> Handle(CreateMonitorRequest request, CancellationToken cancellationToken)
@@ -45,7 +47,7 @@ internal sealed partial class CreateMonitorCommandHandler(
             throw new MonitorCityNotFoundException(request.City, request.State);
         }
 
-        if (await context.HasDuplicateMonitorAsync(request, city.Id, cancellationToken))
+        if (await db.HasDuplicateMonitorAsync(request, city.Id, cancellationToken))
         {
             LogErrorDuplicatedMonitorAttempt(request.ClientId, request.City, request.State, request.Time, request.TimeZoneId);
 
@@ -64,9 +66,9 @@ internal sealed partial class CreateMonitorCommandHandler(
             request.AccessToken
         );
 
-        await context.Monitors.AddAsync(monitor, cancellationToken);
+        await db.Monitors.AddAsync(monitor, cancellationToken);
 
-        await context.SaveChangesAsync(cancellationToken);
+        await db.SaveChangesAsync(cancellationToken);
 
         return new MonitorResponse
         {
@@ -79,6 +81,8 @@ internal sealed partial class CreateMonitorCommandHandler(
             WebhookUrl = monitor.Webhook.Url,
             Time = monitor.Webhook.ScheduleFor,
             TimeZoneId = monitor.Webhook.TimeZoneId,
+            CreatedAt = db.ReadCreatedAtShadowProperty(monitor),
+            UpdatedAt = db.ReadUpdatedAtShadowProperty(monitor),
             Enabled = monitor.Enabled
         };
     }

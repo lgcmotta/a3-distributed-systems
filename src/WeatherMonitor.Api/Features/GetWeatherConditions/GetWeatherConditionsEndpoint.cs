@@ -2,7 +2,7 @@ using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
-using WeatherMonitor.Api.Shared;
+using WeatherMonitor.Api.Contracts;
 
 namespace WeatherMonitor.Api.Features.GetWeatherConditions;
 
@@ -17,7 +17,7 @@ internal static class GetWeatherConditionsEndpoint
                 .WithDisplayName("Get Paginated Weather Conditions")
                 .WithTags("weather")
                 .RequireAuthorization()
-                .Produces<PagedApiResponse<IEnumerable<WeatherConditionResponse>>>(contentType: MediaTypeNames.Application.Json)
+                .Produces<PagedApiResponse<WeatherConditionResponse[]>>(contentType: MediaTypeNames.Application.Json)
                 .Produces<ProblemDetails>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
                 .Produces<ProblemDetails>(StatusCodes.Status500InternalServerError, MediaTypeNames.Application.ProblemJson);
 
@@ -26,12 +26,12 @@ internal static class GetWeatherConditionsEndpoint
     }
 
     private static async Task<IResult> GetWeatherConditionCodesAsync(
-        [AsParameters] GetWeatherConditionsRequest query,
+        [AsParameters] WeatherConditionRequest query,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken = default)
     {
-        (IEnumerable<WeatherConditionResponse> response, PagedResponse pagination) = await mediator.Send(query, cancellationToken);
+        (WeatherConditionResponse[] response, PagedResponse pagination) = await mediator.Send(query, cancellationToken);
 
-        return Results.Ok(new PagedApiResponse<IEnumerable<WeatherConditionResponse>>(response, pagination));
+        return Results.Ok(new PagedApiResponse<WeatherConditionResponse[]>(response, pagination));
     }
 }

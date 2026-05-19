@@ -1,13 +1,13 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using WeatherMonitor.Api.Contracts;
 using WeatherMonitor.Api.Infrastructure.Persistence;
-using WeatherMonitor.Api.Shared;
 
 namespace WeatherMonitor.Api.Features.GetMonitors;
 
-internal sealed class GetMonitorsQueryHandler(AppDbContext context) : IRequestHandler<GetMonitorsRequest, (IEnumerable<MonitorResponse>, PagedResponse)>
+internal sealed class GetMonitorsQueryHandler(AppDbContext context) : IRequestHandler<GetMonitorsRequest, (MonitorResponse[], PagedResponse)>
 {
-    public async Task<(IEnumerable<MonitorResponse>, PagedResponse)> Handle(GetMonitorsRequest request, CancellationToken cancellationToken)
+    public async Task<(MonitorResponse[], PagedResponse)> Handle(GetMonitorsRequest request, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -35,9 +35,11 @@ internal sealed class GetMonitorsQueryHandler(AppDbContext context) : IRequestHa
                 WebhookUrl = monitor.Webhook.Url,
                 Time = monitor.Webhook.ScheduleFor,
                 TimeZoneId = monitor.Webhook.TimeZoneId,
+                CreatedAt = EF.Property<DateTimeOffset>(monitor, "created_at"),
+                UpdatedAt = EF.Property<DateTimeOffset?>(monitor, "updated_at"),
                 Enabled = monitor.Enabled
             })
-            .ToListAsync(cancellationToken);
+            .ToArrayAsync(cancellationToken);
 
         var pagination = new PagedResponse
         {

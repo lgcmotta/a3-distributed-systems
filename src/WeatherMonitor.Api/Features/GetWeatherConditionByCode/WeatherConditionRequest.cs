@@ -1,10 +1,11 @@
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using WeatherMonitor.Api.Contracts;
 
 namespace WeatherMonitor.Api.Features.GetWeatherConditionByCode;
 
 [UsedImplicitly]
-internal record GetWeatherConditionByCodeRequest(
+internal record WeatherConditionRequest(
     [property: FromRoute(Name = "code")] string Code
-) : IRequest<WeatherConditionByCodeResponse>;
+) : IRequest<WeatherConditionResponse>;

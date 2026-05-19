@@ -3,8 +3,8 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Security.Claims;
+using WeatherMonitor.Api.Contracts;
 using WeatherMonitor.Api.Extensions;
-using WeatherMonitor.Api.Shared;
 
 namespace WeatherMonitor.Api.Features.CreateMonitor;
 
@@ -44,7 +44,7 @@ internal static class CreateMonitorEndpoint
 
         CreateMonitorRequest command = body with { ClientId = principal.Identity.Name };
 
-        var response = await mediator.Send(command, cancellationToken);
+        MonitorResponse response = await mediator.Send(command, cancellationToken);
 
         return Results.Created($"/api/v{version:V}/monitors/{response.MonitorId}", new ApiResponse<MonitorResponse>(response));
     }
