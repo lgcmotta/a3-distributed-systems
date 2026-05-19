@@ -87,7 +87,7 @@ public sealed class WebhookSettings
         ScheduleFor = time.Value;
     }
 
-    public void SwitchTimeZone(string? timeZoneId)
+    internal void SwitchTimeZone(string? timeZoneId)
     {
         if (timeZoneId is null)
         {
