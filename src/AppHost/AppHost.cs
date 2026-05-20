@@ -12,9 +12,9 @@ var database = postgres.AddWeatherMonitorDatabase();
 
 var dotnet = builder.AddDotNetEfDatabaseUpdateCommand(database);
 
-builder.AddWeatherMonitorProject(keycloak, redis, database, dotnet);
+var samples = builder.AddSampleApps();
 
-builder.AddSampleApps();
+builder.AddWeatherMonitorProject(keycloak, redis, database, dotnet, samples);
 
 var app = builder.Build();
 

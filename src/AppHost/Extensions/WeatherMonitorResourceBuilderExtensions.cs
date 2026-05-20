@@ -8,7 +8,8 @@ internal static class WeatherMonitorResourceBuilderExtensions
             IResourceBuilder<KeycloakResource> keycloak,
             IResourceBuilder<RedisResource> redis,
             IResourceBuilder<PostgresDatabaseResource> database,
-            IResourceBuilder<ExecutableResource> dotnet)
+            IResourceBuilder<ExecutableResource> dotnet,
+            IReadOnlyCollection<IResourceBuilder<ContainerResource>> samples)
         {
             var brasilApi = builder.AddParameter("brasil-api-url");
             var retries = builder.AddParameter("weather-db-retries");
@@ -25,8 +26,7 @@ internal static class WeatherMonitorResourceBuilderExtensions
                 .WaitForCompletion(dotnet)
                 .WithUrlForEndpoint("http", _ => new ResourceUrlAnnotation { Url = "/scalar", DisplayText = "Scalar" })
                 .WithUrlForEndpoint("http", _ => new ResourceUrlAnnotation { Url = "/tickerq/dashboard", DisplayText = "TickerQ" })
-                .WithUrls(context => context.Urls.RemoveAll(url => url.Endpoint is { EndpointName: "http" } &&
-                                                                   string.IsNullOrWhiteSpace(url.DisplayText)))
+                .WithUrls(context => context.Urls.RemoveAll(url => url.Endpoint is { EndpointName: "http" } && string.IsNullOrWhiteSpace(url.DisplayText)))
                 .WithHttpHealthCheck("/healthz/ready")
                 .WithHttpHealthCheck("/healthz/live")
                 .WithEnvironment("BrasilApiUrl", brasilApi)
@@ -48,6 +48,11 @@ internal static class WeatherMonitorResourceBuilderExtensions
                     context.EnvironmentVariables["Keycloak__RequireHttpsMetadata"] = "false";
                     context.EnvironmentVariables["KEYCLOAK_MANAGEMENT"] = keycloak.GetEndpoint("management").Url.TrimEnd('/');
                 });
+
+            foreach (IResourceBuilder<ContainerResource> sample in samples)
+            {
+                weather.WithReference(sample.GetEndpoint(name: "http")).WaitFor(sample);
+            }
 
             return weather;
         }
