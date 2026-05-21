@@ -68,6 +68,8 @@ internal static class ServiceCollectionExtensions
 
             services.AddOpenApi(options =>
             {
+                options.AddExamplesTransformer();
+
                 if (keycloak is null)
                 {
                     return;

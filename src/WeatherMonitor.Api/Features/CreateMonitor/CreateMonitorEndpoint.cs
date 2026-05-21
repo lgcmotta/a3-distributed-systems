@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Security.Claims;
 using WeatherMonitor.Api.Contracts;
-using WeatherMonitor.Api.Extensions;
+using WeatherMonitor.Api.OpenApi;
 
 namespace WeatherMonitor.Api.Features.CreateMonitor;
 
@@ -19,6 +19,7 @@ internal static class CreateMonitorEndpoint
                 .WithDisplayName("Create Monitor")
                 .WithTags("monitors")
                 .RequireAuthorization()
+                .WithOpenApiExampleProvider<CreateMonitorOpenApiEndpointExampleProvider>()
                 .Produces<ApiResponse<MonitorResponse>>(StatusCodes.Status201Created, contentType: MediaTypeNames.Application.Json)
                 .Produces<ProblemDetails>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
                 .Produces(statusCode: StatusCodes.Status401Unauthorized)
