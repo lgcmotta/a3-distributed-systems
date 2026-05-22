@@ -34,12 +34,12 @@ internal class OpenApiExampleTransformer : IOpenApiOperationTransformer
 
             foreach ((string statusCode, IOpenApiResponse response) in operation.Responses ?? [])
             {
-                if (response is { Content: null })
+                if (response is { Content: null } || !int.TryParse(statusCode, out var status))
                 {
                     continue;
                 }
 
-                var responseExample = int.Parse(statusCode) switch
+                var responseExample = status switch
                 {
                     StatusCodes.Status200OK => provider.Create200OkExample(),
                     StatusCodes.Status201Created => provider.Create201CreatedExample(),
