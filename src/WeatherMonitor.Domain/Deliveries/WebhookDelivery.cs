@@ -20,7 +20,8 @@ public sealed class WebhookDelivery : IAggregateRoot
         string cityName,
         string state,
         string weatherConditionCode,
-        string weatherConditionDescription) : this()
+        string weatherConditionDescription,
+        string timeZoneId = "") : this()
     {
         if (monitorId == Guid.Empty)
         {
@@ -54,7 +55,8 @@ public sealed class WebhookDelivery : IAggregateRoot
             ClientId = clientId.Trim(),
             ForecastDate = forecastDate,
             Location = new WeatherLocation { Code = cityCode, Name = cityName.Trim(), State = state.Trim().ToUpperInvariant() },
-            WeatherCondition = new WeatherCondition { Code = weatherConditionCode.Trim(), Description = weatherConditionDescription.Trim() }
+            WeatherCondition = new WeatherCondition { Code = weatherConditionCode.Trim(), Description = weatherConditionDescription.Trim() },
+            TimeZoneId = timeZoneId.Trim()
         };
     }
 

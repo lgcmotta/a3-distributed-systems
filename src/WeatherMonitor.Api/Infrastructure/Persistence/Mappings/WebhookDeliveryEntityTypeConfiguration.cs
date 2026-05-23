@@ -30,6 +30,8 @@ public class WebhookDeliveryEntityTypeConfiguration : IEntityTypeConfiguration<W
             complex.SnakeCaseLowerJsonProperty(payload => payload.ClientId);
             complex.SnakeCaseLowerJsonProperty(payload => payload.ForecastDate);
 
+            complex.SnakeCaseLowerJsonProperty(payload => payload.TimeZoneId);
+
             complex.ComplexProperty(property => property.Location, property =>
             {
                 property.SnakeCaseLowerJsonProperty(location => location.Code);

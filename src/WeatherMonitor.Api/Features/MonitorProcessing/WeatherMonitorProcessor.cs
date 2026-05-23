@@ -76,7 +76,8 @@ internal sealed partial class WeatherMonitorProcessor(
                             monitor.Location.CityName,
                             monitor.Location.State.Value,
                             weather.Condition,
-                            weather.Description
+                            weather.Description,
+                            monitor.Webhook.TimeZoneId
                         );
 
                         await db.Deliveries.AddAsync(delivery, cancellationToken);
