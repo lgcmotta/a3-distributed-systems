@@ -44,6 +44,7 @@ public sealed class WebhookDelivery : IAggregateRoot
         ArgumentException.ThrowIfNullOrWhiteSpace(state);
         ArgumentException.ThrowIfNullOrWhiteSpace(weatherConditionCode);
         ArgumentException.ThrowIfNullOrWhiteSpace(weatherConditionDescription);
+        ArgumentException.ThrowIfNullOrWhiteSpace(timeZoneId);
 
         Id = Guid.CreateVersion7();
         ScheduledFor = scheduledFor;

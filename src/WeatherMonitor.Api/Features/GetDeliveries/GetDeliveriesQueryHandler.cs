@@ -4,14 +4,13 @@ using WeatherMonitor.Api.Contracts;
 using WeatherMonitor.Api.Infrastructure.Extensions;
 using WeatherMonitor.Api.Infrastructure.Persistence;
 
+// ReSharper disable EntityFramework.UnsupportedServerSideFunctionCall
+
 namespace WeatherMonitor.Api.Features.GetDeliveries;
 
-internal sealed class GetDeliveriesQueryHandler(AppDbContext context)
-    : IRequestHandler<GetDeliveriesRequest, (DeliveryResponse[], PagedResponse)>
+internal sealed class GetDeliveriesQueryHandler(AppDbContext context) : IRequestHandler<GetDeliveriesRequest, (DeliveryResponse[], PagedResponse)>
 {
-    public async Task<(DeliveryResponse[], PagedResponse)> Handle(
-        GetDeliveriesRequest request,
-        CancellationToken cancellationToken)
+    public async Task<(DeliveryResponse[], PagedResponse)> Handle(GetDeliveriesRequest request, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -19,23 +18,20 @@ internal sealed class GetDeliveriesQueryHandler(AppDbContext context)
             .AsNoTracking()
             .Where(delivery => delivery.Payload.ClientId == request.ClientId);
 
-        if (request.Start.HasValue)
+        var start = request.Start?.ToDateTime(TimeOnly.MinValue);
+        var end = request.End?.AddDays(1).ToDateTime(TimeOnly.MinValue);
+
+        query = request switch
         {
-            var startUtc = new DateTimeOffset(
-                request.Start.Value.ToDateTime(TimeOnly.MinValue),
-                TimeSpan.Zero);
-
-            query = query.Where(delivery => delivery.ScheduledFor >= startUtc);
-        }
-
-        if (request.End.HasValue)
-        {
-            var endUtc = new DateTimeOffset(
-                request.End.Value.ToDateTime(TimeOnly.MaxValue),
-                TimeSpan.Zero);
-
-            query = query.Where(delivery => delivery.ScheduledFor <= endUtc);
-        }
+            { Start: not null, End: not null } => query.Where(delivery =>
+                TimeZoneInfo.ConvertTimeBySystemTimeZoneId(delivery.ScheduledFor.UtcDateTime, delivery.Payload.TimeZoneId) >= start &&
+                TimeZoneInfo.ConvertTimeBySystemTimeZoneId(delivery.ScheduledFor.UtcDateTime, delivery.Payload.TimeZoneId) < end),
+            { Start: not null, End: null } => query.Where(delivery =>
+                TimeZoneInfo.ConvertTimeBySystemTimeZoneId(delivery.ScheduledFor.UtcDateTime, delivery.Payload.TimeZoneId) >= start),
+            { Start: null, End: not null } => query.Where(delivery =>
+                TimeZoneInfo.ConvertTimeBySystemTimeZoneId(delivery.ScheduledFor.UtcDateTime, delivery.Payload.TimeZoneId) < end),
+            _ => query
+        };
 
         var total = await query.CountAsync(cancellationToken);
 
@@ -57,9 +53,12 @@ internal sealed class GetDeliveriesQueryHandler(AppDbContext context)
                 CityName = delivery.Payload.Location.Name,
                 State = delivery.Payload.Location.State,
                 WeatherConditionCode = delivery.Payload.WeatherCondition.Code,
-                WeatherConditionDescription = delivery.Payload.WeatherCondition.Description
-            })
-            .ToArrayAsync(cancellationToken);
+                WeatherConditionDescription = delivery.Payload.WeatherCondition.Description,
+                CreatedAt =
+                    EF.Property<DateTimeOffset>(delivery, "created_at").ToLocalTimeZone(delivery.Payload.TimeZoneId),
+                UpdatedAt = EF.Property<DateTimeOffset?>(delivery, "updated_at")
+                    .ToLocalTimeZone(delivery.Payload.TimeZoneId),
+            }).ToArrayAsync(cancellationToken);
 
         var pagination = new PagedResponse
         {
