@@ -284,6 +284,8 @@ namespace WeatherMonitor.Api.Infrastructure.Persistence.Migrations
                                     b2.Property<string>("State")
                                         .IsRequired()
                                         .HasJsonPropertyName("state");
+
+                                    b2.HasJsonPropertyName("location");
                                 });
 
                             b1.ComplexProperty(typeof(Dictionary<string, object>), "WeatherCondition", "WeatherMonitor.Domain.Deliveries.WebhookDelivery.Payload#DeliveryPayload.WeatherCondition#WeatherCondition", b2 =>
@@ -297,6 +299,8 @@ namespace WeatherMonitor.Api.Infrastructure.Persistence.Migrations
                                     b2.Property<string>("Description")
                                         .IsRequired()
                                         .HasJsonPropertyName("description");
+
+                                    b2.HasJsonPropertyName("weather_condition");
                                 });
 
                             b1
