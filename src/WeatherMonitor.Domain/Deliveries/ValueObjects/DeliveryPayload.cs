@@ -14,6 +14,5 @@ public sealed record DeliveryPayload
     public required WeatherLocation Location { get; init; }
 
     public required WeatherCondition WeatherCondition { get; init; }
-    
     public string TimeZoneId { get; init; } = string.Empty;
 }
