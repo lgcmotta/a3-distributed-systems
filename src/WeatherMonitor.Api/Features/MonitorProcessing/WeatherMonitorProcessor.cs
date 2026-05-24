@@ -71,6 +71,7 @@ internal sealed partial class WeatherMonitorProcessor(
                             monitor.Id,
                             monitor.ClientId,
                             forecastDate,
+                            monitor.Webhook.TimeZoneId,
                             scheduled,
                             monitor.Location.CityCode,
                             monitor.Location.CityName,

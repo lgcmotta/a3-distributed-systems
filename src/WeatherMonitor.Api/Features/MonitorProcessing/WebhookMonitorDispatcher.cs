@@ -160,6 +160,7 @@ file static class WebhookMonitorDispatcherExtensions
                 delivery.Payload.MonitorId,
                 delivery.Payload.ClientId,
                 delivery.Payload.ForecastDate,
+                delivery.Payload.TimeZoneId,
                 delivery.Payload.Location.Code,
                 delivery.Payload.Location.Name,
                 delivery.Payload.Location.State,

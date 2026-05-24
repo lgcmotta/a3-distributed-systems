@@ -5,6 +5,7 @@ internal sealed record WebhookDeliveryPayload(
     Guid MonitorId,
     string ClientId,
     DateOnly ForecastDate,
+    string TimeZoneId,
     int CityCode,
     string CityName,
     string State,

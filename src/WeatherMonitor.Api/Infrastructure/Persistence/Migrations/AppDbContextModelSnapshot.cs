@@ -266,6 +266,10 @@ namespace WeatherMonitor.Api.Infrastructure.Persistence.Migrations
                             b1.Property<Guid>("MonitorId")
                                 .HasJsonPropertyName("monitor_id");
 
+                            b1.Property<string>("TimeZoneId")
+                                .IsRequired()
+                                .HasJsonPropertyName("time_zone_id");
+
                             b1.ComplexProperty(typeof(Dictionary<string, object>), "Location", "WeatherMonitor.Domain.Deliveries.WebhookDelivery.Payload#DeliveryPayload.Location#WeatherLocation", b2 =>
                                 {
                                     b2.IsRequired();

@@ -15,6 +15,7 @@ public sealed class WebhookDelivery : IAggregateRoot
         Guid monitorId,
         string clientId,
         DateOnly forecastDate,
+        string timeZoneId,
         DateTimeOffset scheduledFor,
         int cityCode,
         string cityName,
@@ -43,6 +44,12 @@ public sealed class WebhookDelivery : IAggregateRoot
         ArgumentException.ThrowIfNullOrWhiteSpace(state);
         ArgumentException.ThrowIfNullOrWhiteSpace(weatherConditionCode);
         ArgumentException.ThrowIfNullOrWhiteSpace(weatherConditionDescription);
+        ArgumentException.ThrowIfNullOrWhiteSpace(timeZoneId);
+
+        if (!TimeZoneInfo.TryFindSystemTimeZoneById(timeZoneId.Trim(), out var timeZone))
+        {
+            throw new ArgumentException($"'{timeZoneId}' is not a valid time zone ID. Use an IANA time zone ID.", nameof(timeZoneId));
+        }
 
         Id = Guid.CreateVersion7();
         ScheduledFor = scheduledFor;
@@ -53,8 +60,9 @@ public sealed class WebhookDelivery : IAggregateRoot
             MonitorId = monitorId,
             ClientId = clientId.Trim(),
             ForecastDate = forecastDate,
+            TimeZoneId = timeZone.Id,
             Location = new WeatherLocation { Code = cityCode, Name = cityName.Trim(), State = state.Trim().ToUpperInvariant() },
-            WeatherCondition = new WeatherCondition { Code = weatherConditionCode.Trim(), Description = weatherConditionDescription.Trim() }
+            WeatherCondition = new WeatherCondition { Code = weatherConditionCode.Trim(), Description = weatherConditionDescription.Trim() },
         };
     }
 
