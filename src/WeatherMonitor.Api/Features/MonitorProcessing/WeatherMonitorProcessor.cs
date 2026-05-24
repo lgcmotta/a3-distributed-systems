@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using TickerQ.Utilities;
 using TickerQ.Utilities.Base;
 using TickerQ.Utilities.Entities;
@@ -16,6 +17,7 @@ namespace WeatherMonitor.Api.Features.MonitorProcessing;
 [UsedImplicitly]
 internal sealed partial class WeatherMonitorProcessor(
     ILogger<WeatherMonitorProcessor> logger,
+    IOptionsSnapshot<ProcessorOptions> options,
     IBrasilApiClient api,
     AppDbContext db,
     TimeProvider time,
@@ -30,7 +32,7 @@ internal sealed partial class WeatherMonitorProcessor(
         {
             try
             {
-                var response = await api.GetForecastAsync(cityCode, days: 2, cancellationToken);
+                var response = await api.GetForecastAsync(cityCode, days: options.Value.ForecastDays, cancellationToken);
 
                 if (response is not { IsSuccessful: true, Content: not null })
                 {
