@@ -1,15 +1,10 @@
 using Microsoft.OpenApi;
-using System.Net.Http;
 using WeatherMonitor.Api.OpenApi.Security;
 
 namespace WeatherMonitor.Api.OpenApi.Transformers;
 
 internal abstract class SecuritySchemeDocumentTransformer
 {
-    protected SecuritySchemeDocumentTransformer()
-    {
-    }
-
     protected virtual void ApplySecurity(OpenApiDocument document, OpenApiSecurityWrapper security)
     {
         document.Components ??= new OpenApiComponents();
