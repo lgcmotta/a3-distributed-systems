@@ -46,7 +46,9 @@ internal sealed class GetDeliveriesQueryHandler(AppDbContext context) : IRequest
                 DeliveryId = delivery.Id,
                 MonitorId = delivery.Payload.MonitorId,
                 ForecastDate = delivery.Payload.ForecastDate,
+                TimeZoneId = delivery.Payload.TimeZoneId,
                 ScheduledFor = delivery.ScheduledFor.ToLocalTimeZone(delivery.Payload.TimeZoneId),
+                DeliveredAt = delivery.DeliveredAt.ToLocalTimeZone(delivery.Payload.TimeZoneId),
                 Status = delivery.Status.Value,
                 RetryCount = delivery.RetryCount,
                 CityCode = delivery.Payload.Location.Code,
@@ -54,11 +56,10 @@ internal sealed class GetDeliveriesQueryHandler(AppDbContext context) : IRequest
                 State = delivery.Payload.Location.State,
                 WeatherConditionCode = delivery.Payload.WeatherCondition.Code,
                 WeatherConditionDescription = delivery.Payload.WeatherCondition.Description,
-                CreatedAt =
-                    EF.Property<DateTimeOffset>(delivery, "created_at").ToLocalTimeZone(delivery.Payload.TimeZoneId),
-                UpdatedAt = EF.Property<DateTimeOffset?>(delivery, "updated_at")
-                    .ToLocalTimeZone(delivery.Payload.TimeZoneId),
-            }).ToArrayAsync(cancellationToken);
+                CreatedAt = EF.Property<DateTimeOffset>(delivery, "created_at").ToLocalTimeZone(delivery.Payload.TimeZoneId),
+                UpdatedAt = EF.Property<DateTimeOffset?>(delivery, "updated_at").ToLocalTimeZone(delivery.Payload.TimeZoneId)
+            })
+            .ToArrayAsync(cancellationToken);
 
         var pagination = new PagedResponse
         {

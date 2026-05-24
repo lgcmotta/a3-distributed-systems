@@ -5,7 +5,9 @@ public record DeliveryResponse
     public required Guid DeliveryId { get; init; }
     public required Guid MonitorId { get; init; }
     public required DateOnly ForecastDate { get; init; }
+    public required string TimeZoneId { get; init; }
     public required DateTimeOffset ScheduledFor { get; init; }
+    public required DateTimeOffset? DeliveredAt { get; init; }
     public required string Status { get; init; }
     public required int RetryCount { get; init; }
     public required int CityCode { get; init; }
