@@ -10,8 +10,6 @@ internal sealed class GetMonitorsQueryHandler(AppDbContext context) : IRequestHa
 {
     public async Task<(MonitorResponse[], PagedResponse)> Handle(GetMonitorsRequest request, CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         var query = context.Monitors
             .AsNoTracking()
             .Where(m => m.ClientId == request.ClientId);

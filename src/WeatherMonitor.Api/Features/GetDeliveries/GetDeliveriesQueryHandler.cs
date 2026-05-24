@@ -12,8 +12,6 @@ internal sealed class GetDeliveriesQueryHandler(AppDbContext context) : IRequest
 {
     public async Task<(DeliveryResponse[], PagedResponse)> Handle(GetDeliveriesRequest request, CancellationToken cancellationToken = default)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         var query = context.Deliveries
             .AsNoTracking()
             .Where(delivery => delivery.Payload.ClientId == request.ClientId);

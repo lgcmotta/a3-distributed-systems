@@ -9,8 +9,6 @@ internal sealed class GetWeatherConditionsQueryHandler : IRequestHandler<Weather
 {
     public Task<(WeatherConditionResponse[], PagedResponse)> Handle(WeatherConditionRequest request, CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         var weatherConditionCodes = Enumeration.Enumerate<WeatherCondition>()
             .OrderBy(weatherCondition => weatherCondition.Code, StringComparer.Ordinal)
             .ToArray();
