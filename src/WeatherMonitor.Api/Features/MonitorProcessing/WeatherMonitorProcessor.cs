@@ -71,13 +71,13 @@ internal sealed partial class WeatherMonitorProcessor(
                             monitor.Id,
                             monitor.ClientId,
                             forecastDate,
+                            monitor.Webhook.TimeZoneId,
                             scheduled,
                             monitor.Location.CityCode,
                             monitor.Location.CityName,
                             monitor.Location.State.Value,
                             weather.Condition,
-                            weather.Description,
-                            monitor.Webhook.TimeZoneId
+                            weather.Description
                         );
 
                         await db.Deliveries.AddAsync(delivery, cancellationToken);
