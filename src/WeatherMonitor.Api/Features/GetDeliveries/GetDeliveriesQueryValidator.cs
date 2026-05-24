@@ -16,9 +16,12 @@ internal sealed class GetDeliveriesQueryValidator : AbstractValidator<GetDeliver
             .LessThanOrEqualTo(50)
             .WithMessage("must be less than or equal to 50");
 
-        RuleFor(query => query)
-            .Must(query => !query.Start.HasValue || !query.End.HasValue || query.Start.Value <= query.End.Value)
-            .WithName("DateRange")
-            .WithMessage("start must be less than or equal to end");
+        When(query => query is { Start: not null, End: not null }, () =>
+        {
+            RuleFor(query => query)
+                .Must(query => query.Start! <= query.End!)
+                .WithName("filter")
+                .WithMessage("start must be less than or equal to end");
+        });
     }
 }
