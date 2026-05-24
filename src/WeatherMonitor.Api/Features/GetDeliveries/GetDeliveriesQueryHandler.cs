@@ -51,6 +51,7 @@ internal sealed class GetDeliveriesQueryHandler(AppDbContext context) : IRequest
                 DeliveredAt = delivery.DeliveredAt.ToLocalTimeZone(delivery.Payload.TimeZoneId),
                 Status = delivery.Status.Value,
                 RetryCount = delivery.RetryCount,
+                FailureReason = delivery.FailureReason,
                 CityCode = delivery.Payload.Location.Code,
                 CityName = delivery.Payload.Location.Name,
                 State = delivery.Payload.Location.State,
