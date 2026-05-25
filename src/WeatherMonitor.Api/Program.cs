@@ -23,7 +23,7 @@ builder.Services.AddKeycloak(builder.Configuration);
 builder.Services.AddCQRS();
 builder.Services.AddCaching(builder.Configuration);
 builder.Services.AddBrasilApiClient(builder.Configuration);
-builder.Services.AddWebhookDispatcherHttpClient();
+builder.Services.AddWebhookDispatcherHttpClient(builder.Configuration);
 builder.Services.AddTimeProvider();
 builder.Services.AddAppDbContext();
 builder.Services.AddScheduledJobs(builder.Configuration);
@@ -51,13 +51,13 @@ if (app.Environment.IsDevelopment())
 
 var api = app.MapApiGroup();
 
+api.MapGetDeliveries(v1);
 api.MapGetWeatherConditionCodes(v1);
 api.MapGetWeatherConditionByCode(v1);
+api.MapGetMonitorById(v1);
 api.MapGetMonitors(v1);
 api.MapPostCreateMonitor(v1);
 api.MapPatchUpdateMonitor(v1);
-api.MapGetMonitorById(v1);
-api.MapGetDeliveries(v1);
 
 app.UseScheduledJobs();
 

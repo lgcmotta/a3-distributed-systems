@@ -15,6 +15,7 @@ using WeatherMonitor.Api.Diagnostics;
 using WeatherMonitor.Api.Features.MonitorProcessing;
 using WeatherMonitor.Api.Infrastructure.Clients.Handlers;
 using WeatherMonitor.Api.Infrastructure.Clients.Interfaces;
+using WeatherMonitor.Api.Infrastructure.Clients.Options;
 using WeatherMonitor.Api.Infrastructure.Keycloak;
 using WeatherMonitor.Api.Infrastructure.Persistence;
 using WeatherMonitor.Api.Infrastructure.Persistence.Interceptors;
@@ -136,29 +137,45 @@ internal static class ServiceCollectionExtensions
 
         internal IServiceCollection AddBrasilApiClient(IConfiguration configuration)
         {
-            var brasilApiUrl = configuration.GetValue<string>("BrasilApiUrl");
+            var clientOptions = configuration.GetSection(key: BrasilApiOptions.SectionName).Get<BrasilApiOptions>();
 
-            ArgumentException.ThrowIfNullOrEmpty(brasilApiUrl);
+            if (clientOptions is null)
+            {
+                throw new ArgumentException("Missing configuration section for BrasilAPI", nameof(configuration));
+            }
+
+            ArgumentException.ThrowIfNullOrWhiteSpace(clientOptions.BaseAddress.OriginalString);
+
+            if (clientOptions.Resilience is null)
+            {
+                throw new ArgumentException("Missing Resilience configuration for BrasilAPI", nameof(configuration));
+            }
+
+            services.AddOptions<CachingHandlerOptions>()
+                .Bind(configuration.GetSection(nameof(CachingHandler)))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
 
             services.AddTransient<CachingHandler>();
 
-            services
-                .AddRefitClient<IBrasilApiClient>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri(brasilApiUrl))
+            services.AddRefitClient<IBrasilApiClient>()
+                .ConfigureHttpClient(client => client.BaseAddress = clientOptions.BaseAddress)
                 .AddHttpMessageHandler<CachingHandler>()
                 .AddStandardResilienceHandler(options =>
                 {
-                    options.TotalRequestTimeout.Timeout = TimeSpan.FromMinutes(1);
-                    options.AttemptTimeout.Timeout = TimeSpan.FromMinutes(1);
-                    options.CircuitBreaker.SamplingDuration = TimeSpan.FromMinutes(2);
+                    options.TotalRequestTimeout.Timeout = clientOptions.Resilience.TotalRequestTimeout;
+                    options.AttemptTimeout.Timeout = clientOptions.Resilience.AttemptTimeout;
+                    options.CircuitBreaker.SamplingDuration = clientOptions.Resilience.SamplingDuration;
                 });
 
             return services;
         }
 
-        internal IServiceCollection AddWebhookDispatcherHttpClient()
+        internal IServiceCollection AddWebhookDispatcherHttpClient(IConfiguration configuration)
         {
-            services.AddHttpClient(nameof(WebhookMonitorDispatcher), configureClient: client => client.Timeout = TimeSpan.FromMinutes(1));
+            var timeout = configuration.GetValue("WebhookMonitorDispatcher:Timeout", TimeSpan.FromMinutes(1));
+
+            services.AddHttpClient(nameof(WebhookMonitorDispatcher), configureClient: client => client.Timeout = timeout);
 
             return services;
         }
@@ -195,12 +212,12 @@ internal static class ServiceCollectionExtensions
 
         internal IServiceCollection AddScheduledJobs(IConfiguration configuration)
         {
-            IConfigurationSection section = configuration.GetSection(WeatherMonitorProcessorOptions.SectionName);
+            IConfigurationSection section = configuration.GetSection(ProcessorOptions.SectionName);
 
-            services.AddOptions<WeatherMonitorProcessorOptions>()
+            services.AddOptions<ProcessorOptions>()
                 .Bind(section);
 
-            var jobOptions = section.Get<WeatherMonitorProcessorOptions>() ?? WeatherMonitorProcessorOptions.Default();
+            var jobOptions = section.Get<ProcessorOptions>() ?? ProcessorOptions.Default();
 
             services.AddTickerQ(options =>
             {
@@ -209,7 +226,7 @@ internal static class ServiceCollectionExtensions
             });
 
             services.MapTicker<WeatherMonitorProcessor>()
-                .WithCron(jobOptions.ProcessorCronExpression)
+                .WithCron(jobOptions.CronExpression)
                 .WithMaxConcurrency(jobOptions.MaxConcurrency);
 
             services.MapTicker<WebhookMonitorDispatcher, WebhookDeliveryEnvelope>();
