@@ -10,8 +10,6 @@ internal sealed partial class GetWeatherConditionByCodeQueryHandler(ILogger<GetW
 {
     public Task<WeatherConditionResponse> Handle(WeatherConditionRequest request, CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         var weatherCondition = Enumeration.Enumerate<WeatherCondition>()
             .FirstOrDefault(condition => condition.Code == request.Code);
 

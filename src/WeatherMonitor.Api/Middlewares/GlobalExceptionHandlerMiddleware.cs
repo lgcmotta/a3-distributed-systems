@@ -10,6 +10,10 @@ internal sealed class GlobalExceptionHandlerMiddleware(IExceptionHandler handler
         {
             await next(context).ConfigureAwait(continueOnCapturedContext: false);
         }
+        catch (OperationCanceledException exception) when (exception.CancellationToken == context.RequestAborted)
+        {
+            throw;
+        }
         catch (Exception exception)
         {
             await handler.TryHandleAsync(context, exception, context.RequestAborted);

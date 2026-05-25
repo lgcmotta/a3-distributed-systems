@@ -1,14 +1,13 @@
 namespace WeatherMonitor.Api.Features.MonitorProcessing;
 
-public record WeatherMonitorProcessorOptions
+public record ProcessorOptions
 {
     public const string SectionName = "WeatherMonitorProcessor";
-
     public const string DefaultCronExpression = "0 0 * * *";
 
-    public required string ProcessorCronExpression { get; init; }
-
+    public required string CronExpression { get; init; }
     public int MaxConcurrency { get; init; } = 1;
+    public int ForecastDays { get; init; } = 2;
 
-    internal static WeatherMonitorProcessorOptions Default() => new() { ProcessorCronExpression = DefaultCronExpression };
+    internal static ProcessorOptions Default() => new() { CronExpression = DefaultCronExpression };
 }

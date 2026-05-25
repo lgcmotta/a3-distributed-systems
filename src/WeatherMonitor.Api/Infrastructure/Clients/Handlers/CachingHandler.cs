@@ -1,38 +1,44 @@
 using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mime;
+using WeatherMonitor.Api.Infrastructure.Clients.Options;
 
 namespace WeatherMonitor.Api.Infrastructure.Clients.Handlers;
 
-internal sealed class CachingHandler(HybridCache cache) : DelegatingHandler
+internal sealed class CachingHandler(IOptionsSnapshot<CachingHandlerOptions> options, HybridCache cache) : DelegatingHandler
 {
-    private static readonly TimeSpan Ttl = TimeSpan.FromDays(1);
-
-    protected override async Task<HttpResponseMessage> SendAsync(
-        HttpRequestMessage request,
-        CancellationToken cancellationToken)
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         if (request.Method != HttpMethod.Get)
+        {
             return await base.SendAsync(request, cancellationToken);
+        }
 
         var cacheKey = $"{request.Method}:{request.RequestUri}";
+
         HttpResponseMessage? upstreamResponse = null;
+
+        var cacheOptions = new HybridCacheEntryOptions { Expiration = options.Value.Expiration };
 
         var cachedBody = await cache.GetOrCreateAsync<string?>(
             cacheKey,
-            async ct =>
+            factory: async token =>
             {
-                upstreamResponse = await base.SendAsync(request, ct);
+                var response = await base.SendAsync(request, token);
 
-                if (upstreamResponse.StatusCode != HttpStatusCode.OK)
+                if (response is not { StatusCode: HttpStatusCode.OK, Content.Headers.ContentType.MediaType: MediaTypeNames.Application.Json })
+                {
+                    upstreamResponse = response;
                     return null;
+                }
 
-                if (upstreamResponse.Content.Headers.ContentType?.MediaType != MediaTypeNames.Application.Json)
-                    return null;
-
-                return await upstreamResponse.Content.ReadAsStringAsync(ct);
+                using (response)
+                {
+                    return await response.Content.ReadAsStringAsync(token);
+                }
             },
-            new HybridCacheEntryOptions { Expiration = Ttl },
+            options: cacheOptions,
             cancellationToken: cancellationToken);
 
         if (cachedBody is null)
@@ -40,11 +46,9 @@ internal sealed class CachingHandler(HybridCache cache) : DelegatingHandler
             return upstreamResponse ?? await base.SendAsync(request, cancellationToken);
         }
 
-        upstreamResponse?.Dispose();
-
-        return new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+        return new HttpResponseMessage(HttpStatusCode.OK)
         {
-            Content = new StringContent(cachedBody, System.Text.Encoding.UTF8, MediaTypeNames.Application.Json),
+            Content = new StringContent(cachedBody, System.Text.Encoding.UTF8, mediaType: MediaTypeNames.Application.Json),
             RequestMessage = request,
         };
     }

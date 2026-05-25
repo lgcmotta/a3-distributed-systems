@@ -4,7 +4,7 @@ using WeatherMonitor.Api.OpenApi.Providers;
 
 namespace WeatherMonitor.Api.OpenApi.Transformers;
 
-internal class OpenApiExampleTransformer : IOpenApiOperationTransformer
+internal sealed class OpenApiExampleTransformer : IOpenApiOperationTransformer
 {
     public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken _)
     {

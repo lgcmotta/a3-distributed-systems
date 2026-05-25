@@ -37,5 +37,10 @@ internal static class EntityTypeBuilderExtensions
                 ? builder.Property(propertyExpression).HasJsonPropertyName(JsonNamingPolicy.SnakeCaseLower.ConvertName(memberExpression.Member.Name))
                 : builder.Property(propertyExpression);
         }
+
+        internal ComplexPropertyBuilder<TComplex> HasSnakeCaseLowerJsonPropertyName()
+        {
+            return builder.HasJsonPropertyName(JsonNamingPolicy.SnakeCaseLower.ConvertName(builder.Metadata.Name));
+        }
     }
 }

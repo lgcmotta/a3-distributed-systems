@@ -33,6 +33,7 @@ public class WebhookDeliveryEntityTypeConfiguration : IEntityTypeConfiguration<W
 
             complex.ComplexProperty(property => property.Location, property =>
             {
+                property.HasSnakeCaseLowerJsonPropertyName();
                 property.SnakeCaseLowerJsonProperty(location => location.Code);
                 property.SnakeCaseLowerJsonProperty(location => location.Name);
                 property.SnakeCaseLowerJsonProperty(location => location.State);
@@ -40,6 +41,7 @@ public class WebhookDeliveryEntityTypeConfiguration : IEntityTypeConfiguration<W
 
             complex.ComplexProperty(property => property.WeatherCondition, property =>
             {
+                property.HasSnakeCaseLowerJsonPropertyName();
                 property.SnakeCaseLowerJsonProperty(condition => condition.Code);
                 property.SnakeCaseLowerJsonProperty(condition => condition.Description);
             });
