@@ -38,8 +38,8 @@ internal sealed class GetWeatherConditionsOpenApiEndpointExampleProvider : OpenA
         return CreateExampleEntry(
             key: "get-weather-conditions",
             contentType: MediaTypeNames.Application.Json,
-            summary: "Weather conditions returned by code",
-            description: "Returns the weather conditions using the provided code.",
+            summary: "Paginated weather conditions returned.",
+            description: "Returns paginated weather conditions.",
             value: response
         );
     }
