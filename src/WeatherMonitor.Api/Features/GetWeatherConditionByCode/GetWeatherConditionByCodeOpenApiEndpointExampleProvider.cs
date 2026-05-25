@@ -1,9 +1,8 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using WeatherMonitor.Api.OpenApi.Providers;
-using WeatherMonitor.Api.Contracts;
-
 using System.Net.Mime;
+using WeatherMonitor.Api.Contracts;
+using WeatherMonitor.Api.OpenApi.Providers;
 
 namespace WeatherMonitor.Api.Features.GetWeatherConditionByCode;
 
