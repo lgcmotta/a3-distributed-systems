@@ -78,12 +78,17 @@ Use it as the source of truth for project rules until architecture tests are add
   - `MonitorId`
   - `CityCode`
   - `CityName`
-  - `UF`
+  - `State`
   - `WeatherConditionCode`
+  - `WeatherConditionDescription`
   - `WebhookUrl`
   - `Time`
-  - `State`
+  - `TimeZoneId`
+  - `CreatedAt`
+  - `UpdatedAt`
+  - `Enabled`
 - `MonitorId` is a GUID.
+- Never include stored access tokens in monitor responses.
 
 ### Monitor Patch Contract
 
@@ -91,6 +96,7 @@ Use it as the source of truth for project rules until architecture tests are add
   - `WebhookUrl`
   - `AccessToken`
   - `Time`
+  - `TimeZoneId`
   - `Enabled`
 - In PATCH requests:
   - `null` means "do not change this property"
@@ -102,7 +108,8 @@ Use it as the source of truth for project rules until architecture tests are add
 - A duplicate monitor is:
   - same client
   - same resolved city
-  - same scheduled time
+  - same scheduled local time
+  - same time zone
 
 ## Integration Rules
 
@@ -122,10 +129,23 @@ Use it as the source of truth for project rules until architecture tests are add
 - Database shape and EF Core persistence live under `Infrastructure/Persistence`.
 - Auto-migrations run only in Development.
 
+### Configuration
+
+- AppHost-owned runtime knobs live in `src/AppHost/appsettings.json`.
+- Values needed by `WeatherMonitor.Api` under Aspire must be forwarded from AppHost with `AddParameterFromConfiguration` and exposed as environment variables using `__` section separators.
+- Startup/build-time configuration may be materialized during service registration when required to configure DI, HTTP clients, resilience, or scheduled jobs.
+- Runtime options used by services/handlers should use the options pattern when appropriate.
+
+### Cancellation
+
+- Do not add manual `cancellationToken.ThrowIfCancellationRequested()` calls at the top of handlers.
+- Pass cancellation tokens to EF Core, MediatR, HTTP, and other async APIs.
+- Request-abort `OperationCanceledException` should not be converted into `ProblemDetails`.
+
 ## Guardrails
 
 - Do not implement extra endpoints or abstractions outside the agreed issue list.
-- Do not implement TickerQ jobs, outbox delivery, or Aspire Service Defaults unless a tracked issue explicitly covers that work.
+- Do not add new TickerQ jobs, outbox delivery, or additional background orchestration beyond the existing monitor processor and webhook dispatcher unless a tracked issue explicitly covers that work.
 - Do not add advanced architecture layers that are not required by the current POC scope.
 
 ## Working Style
