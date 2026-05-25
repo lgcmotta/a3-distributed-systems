@@ -146,6 +146,11 @@ internal static class ServiceCollectionExtensions
 
             ArgumentException.ThrowIfNullOrWhiteSpace(clientOptions.BaseAddress.OriginalString);
 
+            if (clientOptions.Resilience is null)
+            {
+                throw new ArgumentException("Missing Resilience configuration for BrasilAPI", nameof(configuration));
+            }
+
             services.AddOptions<CachingHandlerOptions>()
                 .Bind(configuration.GetSection(nameof(CachingHandler)))
                 .ValidateDataAnnotations()
