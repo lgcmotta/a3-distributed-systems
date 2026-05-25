@@ -55,14 +55,38 @@ namespace WeatherMonitor.Api.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "ux_weather_monitor_configuration_client_city_schedule_tz",
+                table: "weather_monitor_configuration",
+                columns:
+                [
+                    "client_id",
+                    "monitor_location_city_code",
+                    "webhook_settings_schedule_for",
+                    "webhook_settings_time_zone_id"
+                ],
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "ix_webhook_delivery_status_scheduled_for",
                 table: "webhook_delivery",
                 columns: new[] { "status", "scheduled_for" });
+
+            migrationBuilder.Sql("""
+                                 CREATE UNIQUE INDEX ux_webhook_delivery_monitor_forecast_date
+                                 ON webhook_delivery (
+                                     (payload ->> 'monitor_id'),
+                                     (payload ->> 'forecast_date')
+                                 );
+                                 """);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql("""
+                                 DROP INDEX IF EXISTS ux_webhook_delivery_monitor_forecast_date;
+                                 """);
+
             migrationBuilder.DropTable(
                 name: "weather_monitor_configuration");
 
