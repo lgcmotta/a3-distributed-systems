@@ -25,9 +25,15 @@ jobs:
 
       - name: Restore
         run: dotnet restore WeatherMonitor.slnx
+        shell: bash
+
+      - name: Build
+        run: dotnet build WeatherMonitor.slnx --no-restore
+        shell: bash
 
       - name: Run dotnet format
         run: dotnet format WeatherMonitor.slnx --no-restore --verbosity diagnostic --exclude src/WeatherMonitor.Api/Infrastructure/Persistence/Migrations
+        shell: bash
 
       - name: Comment formatting suggestions
         uses: reviewdog/action-suggester@v1
