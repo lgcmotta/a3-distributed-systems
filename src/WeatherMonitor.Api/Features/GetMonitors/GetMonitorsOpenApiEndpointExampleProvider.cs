@@ -64,7 +64,11 @@ internal sealed class GetMonitorsOpenApiEndpointExampleProvider : OpenApiEndpoin
             {
                 ["trace_id"] = Guid.NewGuid().ToString(),
                 ["exception_type"] = nameof(ValidationException),
-                ["errors"] = new Dictionary<string, string[]> { ["page"] = ["must be greater than 0"], ["size"] = ["must be greater than 0", "must be less than or equal to 50"] }
+                ["errors"] = new Dictionary<string, string[]>
+                {
+                    ["page"] = ["must be greater than 0"],
+                    ["size"] = ["must be greater than 0", "must be less than or equal to 50"]
+                }
             }
         };
 

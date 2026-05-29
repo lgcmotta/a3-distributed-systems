@@ -68,7 +68,12 @@ internal sealed class GetDeliveriesOpenApiEndpointExampleProvider : OpenApiEndpo
             {
                 ["trace_id"] = Guid.NewGuid().ToString(),
                 ["exception_type"] = nameof(ValidationException),
-                ["errors"] = new Dictionary<string, string[]> { ["page"] = ["must be greater than 0"], ["size"] = ["must be greater than 0", "must be less than or equal to 50"], ["start"] = ["start must be less than or equal to end"] }
+                ["errors"] = new Dictionary<string, string[]>
+                {
+                    ["page"] = ["must be greater than 0"],
+                    ["size"] = ["must be greater than 0", "must be less than or equal to 50"],
+                    ["start"] = ["start must be less than or equal to end"]
+                }
             }
         };
 

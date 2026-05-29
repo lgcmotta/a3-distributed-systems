@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using WeatherMonitor.Api.Contracts;
 using WeatherMonitor.Api.OpenApi.Providers;
+using WeatherMonitor.Domain.Core;
+using WeatherMonitor.Domain.Monitors.ValueObjects;
 
 namespace WeatherMonitor.Api.Features.GetWeatherConditions;
 
@@ -10,27 +12,22 @@ internal sealed class GetWeatherConditionsOpenApiEndpointExampleProvider : OpenA
 {
     public override OpenApiMediaTypeExample Create200OkExample()
     {
+        WeatherCondition[] conditions = [.. Enumeration.Enumerate<WeatherCondition>()];
+
         var response = new PagedApiResponse<WeatherConditionResponse[]>(
             Data:
             [
-                new WeatherConditionResponse("c", "Chuva"),
-                new WeatherConditionResponse("ch", "Chuvoso"),
-                new WeatherConditionResponse("ci", "Chuvas Isoladas"),
-                new WeatherConditionResponse("cl", "Céu Claro"),
-                new WeatherConditionResponse("cm", "Chuva pela Manhã"),
-                new WeatherConditionResponse("cn", "Chuva a Noite"),
-                new WeatherConditionResponse("ct", "Chuva a Tarde"),
-                new WeatherConditionResponse("cv", "Chuvisco"),
-                new WeatherConditionResponse("e", "Encoberto"),
-                new WeatherConditionResponse("ec", "Encoberto com Chuvas Isoladas"),
+                ..conditions.OrderBy(condition => condition.Code, StringComparer.Ordinal)
+                    .Take(5)
+                    .Select(condition => new WeatherConditionResponse(condition.Code, condition.Description))
             ],
             Pagination: new PagedResponse
             {
                 Page = 1,
-                Size = 10,
+                Size = 5,
                 Previous = 0,
-                Next = 0,
-                Total = 10,
+                Next = 2,
+                Total = conditions.Length,
                 TotalPages = 1
             }
         );
@@ -56,7 +53,11 @@ internal sealed class GetWeatherConditionsOpenApiEndpointExampleProvider : OpenA
             {
                 ["trace_id"] = Guid.NewGuid().ToString(),
                 ["exception_type"] = nameof(ValidationException),
-                ["errors"] = new Dictionary<string, string[]> { ["page"] = ["must be greater than 0"], ["size"] = ["must be greater than 0", "must be less than or equal to 50"] }
+                ["errors"] = new Dictionary<string, string[]>
+                {
+                    ["page"] = ["must be greater than 0"],
+                    ["size"] = ["must be greater than 0", "must be less than or equal to 50"]
+                }
             }
         };
 

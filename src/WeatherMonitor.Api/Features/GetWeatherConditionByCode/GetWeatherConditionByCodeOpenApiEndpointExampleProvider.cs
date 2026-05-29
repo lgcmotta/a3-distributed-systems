@@ -10,7 +10,7 @@ internal sealed class GetWeatherConditionByCodeOpenApiEndpointExampleProvider : 
 {
     public override OpenApiMediaTypeExample Create200OkExample()
     {
-        var weatherCondition = new WeatherConditionResponse("cv", "chuvisco");
+        var weatherCondition = new WeatherConditionResponse(WeatherCondition.Drizzle.Code, WeatherCondition.Drizzle.Description);
 
         var response = new ApiResponse<WeatherConditionResponse>(weatherCondition);
 
@@ -53,7 +53,7 @@ internal sealed class GetWeatherConditionByCodeOpenApiEndpointExampleProvider : 
             Extensions = new Dictionary<string, object?>
             {
                 ["trace_id"] = Guid.NewGuid().ToString(),
-                ["exception_type"] = nameof(SystemException),
+                ["exception_type"] = nameof(WeatherConditionCodeNotFoundException)
             }
         };
 

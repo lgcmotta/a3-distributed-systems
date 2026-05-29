@@ -67,11 +67,7 @@ internal sealed class GetMonitorByIdOpenApiEndpointExampleProvider : OpenApiEndp
             Detail = "Monitor with ID {monitorId} was not found for the given client ID.",
             Status = StatusCodes.Status404NotFound,
             Instance = path,
-            Extensions = new Dictionary<string, object?>
-            {
-                ["trace_id"] = Guid.NewGuid().ToString(),
-                ["exception_type"] = nameof(SystemException),
-            }
+            Extensions = new Dictionary<string, object?> { ["trace_id"] = Guid.NewGuid().ToString(), ["exception_type"] = nameof(MonitorNotFoundException) }
         };
 
         return CreateExampleEntry(

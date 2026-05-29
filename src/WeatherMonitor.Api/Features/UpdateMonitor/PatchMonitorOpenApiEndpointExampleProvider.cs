@@ -52,7 +52,12 @@ internal sealed class PatchMonitorOpenApiEndpointExampleProvider : OpenApiEndpoi
             {
                 ["trace_id"] = Guid.NewGuid().ToString(),
                 ["exception_type"] = nameof(ValidationException),
-                ["errors"] = new Dictionary<string, string[]> { ["body"] = ["must include at least one property to patch"], ["monitorId"] = ["cannot be empty or null"], ["webhookUrl"] = ["must not be empty", "must be a well-formed absolute URI", "must use HTTP or HTTPS scheme"] }
+                ["errors"] = new Dictionary<string, string[]>
+                {
+                    ["body"] = ["must include at least one property to patch"],
+                    ["monitorId"] = ["cannot be empty or null"],
+                    ["webhookUrl"] = ["must not be empty", "must be a well-formed absolute URI", "must use HTTP or HTTPS scheme"]
+                }
             }
         };
 
@@ -70,7 +75,7 @@ internal sealed class PatchMonitorOpenApiEndpointExampleProvider : OpenApiEndpoi
             Extensions = new Dictionary<string, object?>
             {
                 ["trace_id"] = Guid.NewGuid().ToString(),
-                ["exception_type"] = nameof(SystemException),
+                ["exception_type"] = nameof(MonitorNotFoundException),
             }
         };
 
