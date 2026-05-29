@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using WeatherMonitor.Api.Contracts;
+using WeatherMonitor.Api.OpenApi;
 
 namespace WeatherMonitor.Api.Features.GetWeatherConditionByCode;
 
@@ -17,6 +18,7 @@ internal static class GetWeatherConditionByCodeEndpoint
                 .WithDisplayName("Get Weather Condition By Code")
                 .WithTags("weather")
                 .RequireAuthorization()
+                .WithOpenApiExampleProvider<GetWeatherConditionByCodeOpenApiEndpointExampleProvider>()
                 .Produces<ApiResponse<WeatherConditionResponse>>(contentType: MediaTypeNames.Application.Json)
                 .Produces<ProblemDetails>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
                 .Produces(statusCode: StatusCodes.Status401Unauthorized)

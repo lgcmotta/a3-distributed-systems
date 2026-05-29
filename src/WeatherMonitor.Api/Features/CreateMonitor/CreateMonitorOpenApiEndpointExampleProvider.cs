@@ -29,7 +29,8 @@ internal sealed class CreateMonitorOpenApiEndpointExampleProvider : OpenApiEndpo
             contentType: MediaTypeNames.Application.Json,
             summary: "Create monitor",
             description: "Creates a weather monitor for a city, weather condition, schedule and webhook target.",
-            value: body);
+            value: body
+        );
     }
 
     public override OpenApiMediaTypeExample Create201CreatedExample()
@@ -37,7 +38,7 @@ internal sealed class CreateMonitorOpenApiEndpointExampleProvider : OpenApiEndpo
         var monitor = new MonitorResponse
         {
             MonitorId = Guid.Parse("8b2f1d5d-7c6f-43a2-8d7e-85f0f87e8f91"),
-            CityCode = 3550308,
+            CityCode = 244,
             CityName = BrazilianState.SaoPaulo.Name,
             State = BrazilianState.SaoPaulo.Value,
             WeatherConditionCode = WeatherCondition.Storm.Code,

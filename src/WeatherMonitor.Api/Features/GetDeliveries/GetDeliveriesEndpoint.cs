@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Security.Claims;
 using WeatherMonitor.Api.Contracts;
+using WeatherMonitor.Api.OpenApi;
 
 namespace WeatherMonitor.Api.Features.GetDeliveries;
 
@@ -18,6 +19,7 @@ internal static class GetDeliveriesEndpoint
                 .WithDisplayName("Get Paginated Deliveries")
                 .WithTags("deliveries")
                 .RequireAuthorization()
+                .WithOpenApiExampleProvider<GetDeliveriesOpenApiEndpointExampleProvider>()
                 .Produces<PagedApiResponse<DeliveryResponse[]>>(contentType: MediaTypeNames.Application.Json)
                 .Produces<ProblemDetails>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
                 .Produces(statusCode: StatusCodes.Status401Unauthorized)
