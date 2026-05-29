@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using WeatherMonitor.Api.Contracts;
 using WeatherMonitor.Api.OpenApi.Providers;
+using WeatherMonitor.Domain.Monitors.Exceptions;
+using WeatherMonitor.Domain.Monitors.ValueObjects;
 
 namespace WeatherMonitor.Api.Features.GetWeatherConditionByCode;
 
