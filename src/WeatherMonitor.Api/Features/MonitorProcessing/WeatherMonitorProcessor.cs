@@ -1,6 +1,8 @@
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Diagnostics;
+using System.Text.Json;
 using TickerQ.Utilities;
 using TickerQ.Utilities.Base;
 using TickerQ.Utilities.Entities;
@@ -24,8 +26,12 @@ internal sealed partial class WeatherMonitorProcessor(
     ITimeTickerManager<TimeTickerEntity> manager
 ) : ITickerFunction
 {
+    private static readonly ActivitySource ActivitySource = new(JsonNamingPolicy.KebabCaseLower.ConvertName(nameof(WeatherMonitorProcessor)));
+
     public async Task ExecuteAsync(TickerFunctionContext context, CancellationToken cancellationToken = default)
     {
+        using var activity = ActivitySource.StartActivity(ActivityKind.Server);
+
         var cityCodes = await db.SelectDistinctCityCodesAsync(cancellationToken);
 
         foreach (var cityCode in cityCodes)
@@ -110,7 +116,7 @@ internal sealed partial class WeatherMonitorProcessor(
 
                             delivery.AssignJob(jobId.Value.ToString());
                         }
-                        catch
+                        catch (Exception exception)
                         {
                             delivery.MarkFailed();
 
@@ -118,6 +124,9 @@ internal sealed partial class WeatherMonitorProcessor(
                             {
                                 await manager.DeleteAsync(jobId.Value, cancellationToken);
                             }
+
+                            activity?.SetStatus(ActivityStatusCode.Error, exception.Message);
+                            activity?.SetCustomProperty("error", exception);
 
                             throw;
                         }
@@ -128,12 +137,18 @@ internal sealed partial class WeatherMonitorProcessor(
                     }
                     catch (Exception exception)
                     {
+                        activity?.SetStatus(ActivityStatusCode.Error, exception.Message);
+                        activity?.SetCustomProperty("error", exception);
+
                         logger.LogError(exception, "Monitor {MonitorId} processing failed.", monitor.Id);
                     }
                 }
             }
             catch (Exception exception)
             {
+                activity?.SetStatus(ActivityStatusCode.Error, exception.Message);
+                activity?.SetCustomProperty("error", exception);
+
                 logger.LogError(exception, "City {CityCode} processing failed.", cityCode);
             }
         }

@@ -2,8 +2,10 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
+using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Net.Mime;
+using System.Text.Json;
 using TickerQ.Utilities.Base;
 using TickerQ.Utilities.Interfaces;
 using WeatherMonitor.Api.Infrastructure.Persistence;
@@ -21,8 +23,12 @@ internal sealed partial class WebhookMonitorDispatcher(
     TimeProvider time
 ) : ITickerFunction<WebhookDeliveryEnvelope>
 {
+    private static readonly ActivitySource ActivitySource = new(JsonNamingPolicy.KebabCaseLower.ConvertName(nameof(WebhookMonitorDispatcher)));
+
     public async Task ExecuteAsync(TickerFunctionContext<WebhookDeliveryEnvelope> context, CancellationToken cancellationToken = default)
     {
+        using var activity = ActivitySource.StartActivity(ActivityKind.Producer);
+
         var envelope = context.Request;
 
         var delivery = await db.Deliveries.FirstOrDefaultAsync(delivery => delivery.Id == envelope.DeliveryId, cancellationToken);
@@ -31,7 +37,11 @@ internal sealed partial class WebhookMonitorDispatcher(
         {
             LogWebhookDeliveryNotFound(envelope.DeliveryId, context.RetryCount);
 
-            throw new InvalidOperationException($"Webhook delivery '{envelope.DeliveryId}' was not found.");
+            var message = $"Webhook delivery '{envelope.DeliveryId}' was not found.";
+
+            activity?.SetStatus(ActivityStatusCode.Error, message);
+
+            throw new InvalidOperationException(message);
         }
 
         if (delivery.IsDelivered() || delivery.IsFailed())
@@ -58,7 +68,11 @@ internal sealed partial class WebhookMonitorDispatcher(
 
             await db.SaveChangesAsync(cancellationToken);
 
-            throw new InvalidOperationException($"Weather monitor '{envelope.MonitorId}' was not found.");
+            var message = $"Weather monitor '{envelope.MonitorId}' was not found.";
+
+            activity?.SetStatus(ActivityStatusCode.Error, message);
+
+            throw new InvalidOperationException(message);
         }
 
         if (monitor is { Enabled: false })
@@ -82,7 +96,7 @@ internal sealed partial class WebhookMonitorDispatcher(
 
         using var client = factory.CreateClient(nameof(WebhookMonitorDispatcher));
 
-        HttpRequestMessage request = CreateWebhookHttpRequest(delivery, monitor);
+        HttpRequestMessage request = CreateWebhookHttpRequest(delivery, monitor, activity);
 
         try
         {
@@ -91,6 +105,8 @@ internal sealed partial class WebhookMonitorDispatcher(
             response.EnsureSuccessStatusCode();
 
             delivery.MarkDelivered(time.GetUtcNow());
+
+            activity?.SetCustomProperty("webhook.response.status_code", response.StatusCode.ToString());
 
         }
         catch (Exception exception)
@@ -102,6 +118,8 @@ internal sealed partial class WebhookMonitorDispatcher(
                 delivery.MarkFailed();
             }
 
+            activity?.SetStatus(ActivityStatusCode.Error, exception.Message);
+
             throw;
         }
         finally
@@ -110,9 +128,11 @@ internal sealed partial class WebhookMonitorDispatcher(
         }
     }
 
-    private HttpRequestMessage CreateWebhookHttpRequest(WebhookDelivery delivery, WeatherMonitorConfiguration monitor)
+    private HttpRequestMessage CreateWebhookHttpRequest(WebhookDelivery delivery, WeatherMonitorConfiguration monitor, Activity? activity = null)
     {
         var content = JsonContent.Create(delivery.ToWebhookDeliveryPayload(), new MediaTypeHeaderValue(MediaTypeNames.Application.Json, charSet: "utf-8"));
+
+        activity?.SetCustomProperty("webhook.request", content);
 
         var request = new HttpRequestMessage
         {
