@@ -15,9 +15,9 @@ WORKDIR /app
 
 COPY --from=build /app/main /main
 
-ENV PORT=8080
+ENV PORT=8081
 
-EXPOSE 8080
+EXPOSE 8081
 
 USER 65532:65532
 

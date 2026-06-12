@@ -1,5 +1,4 @@
 using AppHost.Helpers;
-using System.Collections.Immutable;
 
 namespace AppHost.Extensions;
 
@@ -10,7 +9,7 @@ internal static class DockerSamplesResourceBuilderExtensions
     private static readonly IReadOnlyList<SampleApp> SampleApps =
     [
         new(Language: "nodejs", Port: 3000),
-        new(Language: "go", Port: 8080),
+        new(Language: "go", Port: 8081),
         new(Language: "python", Port: 5000)
     ];
 
