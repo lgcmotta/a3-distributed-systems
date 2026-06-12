@@ -49,6 +49,7 @@ For the complete authentication documentation for [Scalar UI](https://github.com
 
 ## Documentation
 
+- [Article](docs/article/weather-monitor.pdf)
 - [Authentication](./docs/auth.md)
 - [Architecture](./docs/architecture.md)
 - [Monitor Lifecycle](./docs/monitor-lifecycle.md)
